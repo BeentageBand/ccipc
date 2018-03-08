@@ -17,7 +17,7 @@ Thread::Cbk::~Cbk(void)
 {}
 
 Thread::Thread(TID_T const tid, Thread::Attributes & attr)
-: tid(tid), thread_cbk(IPC::Get().create_thread_impl())
+: tid(tid), thread_cbk(IPC::Get().get_thread_cbk())
 {
 	if(this->thread_cbk)
 	{
@@ -36,7 +36,7 @@ void Thread::run(void)
 {
 	if(this->thread_cbk)
 	{
-		this->thread_cbk->create_thread();
+		this->thread_cbk->create_thread(this->tid);
 	}
 }
 
@@ -50,7 +50,6 @@ void Thread::wait(uint32_t const wait_ms)
 {
 	while(this->thread_cbk &&
 		0 != this->thread_cbk->join_thread()){}
-
 }
 
 

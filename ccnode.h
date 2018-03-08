@@ -17,8 +17,8 @@ namespace ipc
 class Node
 {
 public:
-	Node(TID_T const tid);
-	virtual ~Node(void);
+	Node(TID_T const tid){}
+	virtual ~Node(void){}
 
 protected:
 	virtual void on_start(void) = 0;

@@ -25,9 +25,9 @@ Worker::~Worker(void)
 
 void Worker::runnable(void)
 {
-	static Mailbox mailbox(this->tid, 255, 64);
+	std::shared_ptr<Mailbox> mailbox(new Mailbox(this->tid, 255, 64));
 
-	IPC::Get().register_maibox(mailbox);
+	IPC::Get().subscribe(mailbox);
 
 	this->on_start();
 
@@ -41,7 +41,7 @@ void Worker::runnable(void)
 		if(mail)
 		{
 			this->on_message(*mail);
-			if(MID_BCT_SHUTDOWN == mail->mid)
+			if(WORKER_BCT_SHUTDOWN_MID == mail->mid)
 			{
 				break;
 			}

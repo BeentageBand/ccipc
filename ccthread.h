@@ -20,6 +20,12 @@ class Thread
 public:
 	struct Attributes
 	{
+		Attributes(uint32_t const priority, size_t const stack_size, std::vector<TID_T> & dependencies)
+		: priority(priority),
+		  stack_size(stack_size),
+		  dependencies(dependencies)
+		{}
+
 		uint32_t priority;
 		size_t stack_size;
 		std::vector<TID_T> dependencies;

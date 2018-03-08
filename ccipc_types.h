@@ -36,6 +36,8 @@ typedef enum
 	MID_MAX
 }MID_T;
 
+typedef uint32_t Clock_T;
+
 }
 
 #endif /* CCIPC_TYPES_H_ */

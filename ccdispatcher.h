@@ -35,7 +35,7 @@ public:
 		for(std::vector<Node *>::iterator it = this->get_subscription().begin();
 				it != this->get_subscription().end(); ++it)
 		{
-			it->on_start();
+			(*it)->on_start();
 		}
 	}
 	virtual void on_message(Mail & mail)
@@ -44,7 +44,7 @@ public:
 		for(std::vector<Node *>::iterator it = this->get_subscription().begin();
 				it != this->get_subscription().end(); ++it)
 		{
-			it->on_message(mail);
+			(*it)->on_message(mail);
 		}
 	}
 	virtual void on_periodic(void)
@@ -53,7 +53,7 @@ public:
 		for(std::vector<Node *>::iterator it = this->get_subscription().begin();
 				it != this->get_subscription().end(); ++it)
 		{
-			it->on_periodic();
+			(*it)->on_periodic();
 		}
 	}
 	virtual void on_stop(void)
@@ -62,7 +62,7 @@ public:
 		for(std::vector<Node *>::iterator it = this->get_subscription().begin();
 				it != this->get_subscription().end(); ++it)
 		{
-			it->on_stop();
+			(*it)->on_stop();
 		}
 	}
 };
