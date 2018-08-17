@@ -1,17 +1,28 @@
+#ifndef CCMUTEX_H_
+#define CCMUTEX_H_
+
+#include <memory>
 #include "ccipc_types.h"
 
-class CCMutex
+namespace cc
+{
+class Mutex
 {
     class Cbk
     {
-        virtual void alloc(CCMutex & mux) = 0;
-        virtual void free(CCMutex & mux) = 0;
-        virtual bool timed_lock(IPC_Clock_T const wait_ms) = 0;
+        Cbk(void);
+        virtual ~Cbk(void);
+        virtual bool lock(IPC_Clock_T const wait_ms) = 0;
         virtual bool unlock(void) = 0;
     };
+    private:
+    std::shared_ptr<Mutex::Cbk> cbk;
     public:
-    CCMutex(void);
-    virtual ~CCMutex(void);
+    Mutex(void);
+    virtual ~Mutex(void);
     bool lock(IPC_Clock_T const wait_ms);
     bool unlock(void);
 };
+
+}
+#endif /*CCMUTEX_H_*/

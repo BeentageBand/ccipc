@@ -14,18 +14,11 @@
 namespace ipc
 {
 
-class Worker : public Thread
+class Worker : public Thread, public Node
 {
-
 public:
-	Worker(TID_T const tid, Thread::Attributes & attr);
+	Worker(TID_T const tid);
 	virtual ~Worker(void);
-
-protected:
-	virtual void on_start(void) = 0;
-	virtual void on_message(Mail & mail) = 0;
-	virtual void on_periodic(void) = 0;
-	virtual void on_stop(void) = 0;
 private:
 	void runnable(void);
 };

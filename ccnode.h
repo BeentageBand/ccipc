@@ -11,13 +11,16 @@
 #include "ccipc_types.h"
 #include "ccmail.h"
 
-namespace ipc
+namespace cc
 {
 
 class Node
 {
 public:
-	Node(TID_T const tid){}
+	uint32_t const nid;
+	Node(uint32_t const nid)
+	: nid(nid)
+	{}
 	virtual ~Node(void){}
 
 protected:

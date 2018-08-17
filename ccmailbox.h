@@ -14,43 +14,34 @@
 #include "ccipc_types.h"
 #include "ccmail.h"
 
-namespace ipc
+namespace cc 
 {
 
 class Mailbox
 {
-public:
 	class Cbk
 	{
-	private:
-		Mailbox * const mbx;
-		uint32_t const wait_ms;
-	public:
-		Cbk(uint32_t const wait_ms, Mailbox & mbx);
+		protected:
+		IPC & ipc;
+		public:
+		explicit Cbk(IPC & ipc);
 		virtual ~Cbk(void);
-
-		virtual bool try_lock(void);
-		virtual bool unlock(void);
-
-		virtual bool request_unlock(void);
-		virtual void respond_unlock(void);
+		virtual void subscribe(Mailbox & mbx) = 0;
+		virtual void unsubscribe(Mailbox & mbx) = 0;
 	};
 public:
-	TID_T const owner;
+	ipc::TID_T const tid;
 private:
-	size_t const max_data_size;
 	std::deque<Mail> queue;
-	std::unique_ptr<Cbk> mbx_cbk;
-
+	Mutex mux;
+	Cond cond;
 public:
-	Mailbox(TID_T const owner, size_t const max_data_size, uint32_t const queue_size);
+	explicit Mailbox(TID_T const tid);
 	virtual ~Mailbox(void);
 
 	void push(Mail & mail);
-	std::shared_ptr<Mail> peek(void);
-
-	template<size_t N>
-	std::shared_ptr<Mail> filter_peek(MID_T (&filter_list)[N]);
+	std::shared_ptr<Mail> tail(ipc::Clock_T const wait_ms);
+	std::shared_ptr<Mail> tail(ipc::MID_T const mid, ipc::Clock_T const wait_ms);
 };
 
 }

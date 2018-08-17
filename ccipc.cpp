@@ -6,130 +6,183 @@
  */
 #include "ccipc.h"
 
-using namespace ipc;
+using namespace cc;
 
-IPC & IPC::Get(void)
-{
-	static IPC ipc(*IPC::ipc_cbk);
-	return ipc;
-}
-IPC::Cbk::Cbk(void)
+IPC::Cbk(void)
 {}
 
 IPC::Cbk::~Cbk(void)
 {}
 
-std::shared_ptr<Mailbox> IPC::Cbk::find_mailbox(TID_T const owner_key)
+IPC & IPC::Get(void)
 {
-
+   std::shared_ptr<IPC::Cbk> cbk;
+   return Get(cbk);
+}
+IPC & IPC::IPC(std::shared_ptr<IPC::Cbk> cbk)
+{
+   static IPC ipc(cbk);
+   if(cbk)
+   {
+   }
+   return ipc;
 }
 
-std::shared_ptr<Thread>  IPC::Cbk::find_thread(TID_T const key)
+IPC::IPC(std::shared_ptr<IPC::Cbk> cbk)
+: thread_pool,
+mailbox_pool(),
+publisher(),
+cbk(cbk)
 {
-	return std::make_shared();
-
+   this->publisher.set(*this);
 }
 
-IPC::IPC(Cbk & ipc_cbk){}
-IPC::~IPC(void){}
-
-bool IPC::subscribe(std::shared_ptr<Mailbox> mbx)
+IPC::~IPC(void)
 {
-	//TODO
-	return this->ipc_cbk->find_mailbox(mbx->owner);
-
-}
-bool IPC::unsubscribe(std::shared_ptr<Mailbox> mbx)
-{
-	//TODO
-	return !this->ipc_cbk->find_mailbox(mbx->owner);
+   this->mailbox_pool.clear();
+   this->thread_pool.clear();
 }
 
-bool IPC::subscribe(std::shared_ptr<Thread> trd)
+
+//Thread
+ipc::TID_T IPC::self(void)
 {
-	//TODO
-	return this->ipc_cbk->find_thread(trd->tid);
+   return this->cbk->self_thread();
 }
 
-bool IPC::unsubscribe(std::shared_ptr<Thread> trd)
+void IPC::wait(ipc::TID_T const tid, ipc::Clock_T const wait_ms)
 {
-	//TODO
-	return !this->ipc_cbk->find_thread(trd->tid);
+   this->thread_pool[tid].wait(wait_ms);
 }
 
 void IPC::ready(void)
 {
-	//TODO
+   this->thread_pool[tid].ready();
 }
 
-void IPC::wait(TID_T const tid, Clock_T const wait_ms)
+void IPC::run(ipc::TID_T const tid)
 {
-	//TODO
+   this->thread_pool[tid].run();
 }
-void IPC::run(TID_T const tid)
-{
 
+//Clock 
+ipc::Clock_T IPC::clock(void)
+{
+   return this->cbk->clock();
+}
+
+bool IPC::is_clock_elapsed(ipc::Clock_T const ms)
+{
+   return ms <= this->clock();
+}
+
+void IPC::sleep(ipc::Clock_T const wait_ms)
+{
+   this->cbk->sleep(wait_ms);
+}
+
+//Mailbox
+template<>
+void IPC::send(ipc::MID_T const mid, ipc::TID_T const receiver, std::stringstream & payload)
+{
+   Mail mail(mid, this->self(), receiver, payload);
+   this->mailbox_pool[receiver]->push(mail);
+}
+
+template<typename T>
+void IPC::send(ipc::MID_T const mid, ipc::TID_T const receiver, T & payload)
+{
+   std::stringstream spay;
+   spay << payload;
+   this->send(mid, receiver, spay);
+}
+
+bool IPC::retrieve_mail(Mail & mail, Clock_T const wait_ms)
+{
+   auto & mbx = this->mailbox_pool[this->self()];
+   std::shared_ptr<Mail> mptr = mbx->tail(wait_ms);
+   mail = *mptr;
+   return mptr;
 }
 
 template <size_t N>
-bool IPC::subscribe(MID_T (*mailist)[N])
+bool IPC::retrieve_mail(Mail & mail, Clock_T const wait_ms, ipc::MID_T (&mailist)[N])
 {
-	
-
+   std::vector<ipc::MID_T> vlist(mailist, mailist + N);
+   return this->retrieve_mail(mail, wait_ms, vlist);
 }
 
-template <size_t N>
-bool IPC::unsubscribe(MID_T (*mailist)[N])
+bool IPC::retrieve_mail(Mail & mail, Clock_T const wait_ms, std::vector<ipc::MID_T> & mailist)
 {
+   auto & mbx = this->mailbox_pool[this->self()];
+   ipc::Clock_T tout = this->clock + wait_ms;
+   std::shared_ptr<Mail> mptr;  
+   for(auto mid = mailist.begin();
+		this->is_clock_elapsed(tout) &&
+		mid != mailist.end();
+		++mid)
+   {
+        mptr = mbx.tail(mid, tout - this->clock);
+		if(mptr) {break;}
+   }
+   return mptr;
 }
 
-void IPC::send(Mail & mail, TID_T const tid)
+//Publisher
+template<uint32_t N>
+bool IPC::subscribe(ipc::MID_T const (& mailist)[N])
 {
-	std::weak_ptr<Mailbox> mbx = this->ipc_cbk->find_mailbox(this->self);
-	if(mbx)
-	{
-		mbx->push(mail);
-	}
+   std::vector<ipc::MID_T> vlist(mailist, mailist + N);
+   this->subscribe(mail, wait_ms, vlist);
 }
 
-
-void IPC::publish(Mail & mail)
+bool IPC::subscribe(std::vector<ipc::MID_T> const & mailist)
 {
-	//TODO
-
+   bool rc = true;
+   for(auto & mid : mailist)
+   {
+      if(!this->publisher.subscribe(mid))
+      {
+         rc = false;
+         break;
+      }
+   }
+   return rc;
 }
 
-std::weak_ptr<Mail> IPC::retrieve_mail(Clock_T const wait_ms)
+template<uint32_t N>
+bool IPC::unsubscribe(ipc::MID_T const (& mailist)[N])
 {
-	std::weak_ptr<Mailbox> mbx = this->ipc_cbk->find_mailbox(this->self);
-	if(mbx.lock())
-	{
-		std::weak_ptr<Mail> peeked_mail(nullptr);
-
-	}
+   std::vector<ipc::MID_T> vlist(mailist, mailist + N);
+   this->unsubscribe(mail, wait_ms, vlist);
 }
 
-template <size_t N>
-std::weak_ptr<Mail> IPC::retrieve_mail(Clock_T const wait_ms, MID_T (&mailist)[N])
+bool IPC::unsubscribe(std::vector<ipc::MID_T> const & mailist)
 {
-	std::shared_ptr<Mailbox> mbx = this->ipc_cbk->find_mailbox(this->self());
-	std::weak_ptr<Mail> peeked_mail;
-	if(mbx)
-	{
-		peeked_mail = mbx->filter_peek(mailist);
-	}
+   bool rc = true;
+   for(auto & mid : mailist)
+   {
+      if(!this->publisher.unsubscribe(mid))
+      {
+         rc = false;
+         break;
+      }
+   }
+   return rc;
 }
 
-Clock_T IPC::clock(void)
+void IPC::publish(ipc::MID_T const mid, std::stringstream & payload)
 {
-
-}
-void IPC::sleep(Clock_T const ms)
-{
-
+   Mail mail(mid, this->self(), 0, payload);
+   this->publisher.publish(mail);
 }
 
-bool IPC::is_time_elapsed(Clock_T const ms)
+void IPC::broadcast(ipc::MID_T const mid, std::stringstream & payload)
 {
-
+   Mail mail(mid, this->self(), 0, payload);
+   for(auto & mbx_ptr : this->mailbox_pool)
+   {
+      mail.receiver = mbx_ptr->tid;
+      mbx_ptr->push(mail);
+   }
 }

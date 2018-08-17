@@ -2,54 +2,58 @@
  * ccthread.cpp
  *
  *  Created on: Aug 31, 2017
- *      Author: puch
+ *        Author: puchh
  */
 
 #include "ccthread.h"
 #include "ccipc.h"
 
-using namespace ipc;
+using namespace cc;
 
-Thread::Cbk::Cbk(TID_T const tid, Thread::Attributes & attr)
+Thread::Cbk::Cbk(void)
 {}
 
 Thread::Cbk::~Cbk(void)
 {}
 
-Thread::Thread(TID_T const tid, Thread::Attributes & attr)
-: tid(tid), thread_cbk(IPC::Get().get_thread_cbk())
+Thread::Thread(ipc::TID_T const tid)
+: tid(tid),
+cbk(IPC::Get().cbk->create_thread()),
+sem(1U)
 {
-	if(this->thread_cbk)
-	{
-		this->thread_cbk->register_thread(*this);
-	}
+    if(this->cbk)
+    {
+        this->cbk->register_thread(*this);
+    }
 }
+
 Thread::~Thread(void)
 {
-	if(this->thread_cbk)
-	{
-		this->thread_cbk->cancel_thread();
-	}
+    if(this->thread_cbk)
+    {
+        this->thread_cbk->cancel_thread();
+    }
 }
 
 void Thread::run(void)
 {
-	if(this->thread_cbk)
-	{
-		this->thread_cbk->create_thread(this->tid);
-	}
+    if(this->thread_cbk)
+    {
+        this->thread_cbk->create_thread(this->tid);
+    }
 }
 
 void Thread::wait(void)
 {
-	while(this->thread_cbk &&
-			0 != this->thread_cbk->join_thread()){}
+    this->sem.wait();
 }
 
 void Thread::wait(uint32_t const wait_ms)
 {
-	while(this->thread_cbk &&
-		0 != this->thread_cbk->join_thread()){}
+    this->sem.wait(wait_ms);
 }
 
-
+void Thread::ready(void)
+{
+    this->sem.ready();
+}

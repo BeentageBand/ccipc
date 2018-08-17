@@ -12,21 +12,24 @@
 #include <sstream>
 #include "ccipc_types.h"
 
-namespace ipc
+namespace cc
 {
 
 class Mail
 {
 public:
-	MID_T const mid;
+	ipc::MID_T const mid;
 private:
-	TID_T receiver;
-	TID_T sender;
+	ipc::TID_T receiver;
+	ipc::TID_T sender;
 	std::stringstream payload;
 
 public:
 	explicit Mail(MID_T const mid)
-	: mid(mid), receiver(TID_MAX), sender(TID_MAX), payload()
+	: mid(mid), 
+	sender(TID_MAX),
+	receiver(TID_MAX),
+	payload()
 	{}
 
 	Mail(Mail & mail)
@@ -44,9 +47,9 @@ public:
 
 	~Mail(void);
 
-	inline TID_T get_receiver(void){ return this->receiver;}
+	inline ipc::TID_T get_receiver(void){ return this->receiver;}
 
-	inline TID_T get_sender(void){ return this->sender;}
+	inline ipc::TID_T get_sender(void){ return this->sender;}
 
 	inline std::stringstream & get_payload(void) {return this->payload;}
 

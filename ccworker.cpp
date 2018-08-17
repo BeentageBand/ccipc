@@ -12,32 +12,28 @@
 
 using namespace ipc;
 
-Worker::Worker(TID_T const tid, Thread::Attributes & attr)
-:Thread(tid, attr)
+Worker::Worker(TID_T const tid)
+:Thread(tid)
 {
-
 }
 
 Worker::~Worker(void)
 {
-
 }
 
 void Worker::runnable(void)
 {
-	std::shared_ptr<Mailbox> mailbox(new Mailbox(this->tid, 255, 64));
-
-	IPC::Get().subscribe(mailbox);
+	std::shared_ptr<Mailbox> mailbox(new Mailbox(this->tid));
 
 	this->on_start();
 
-	IPC::Get().notify_ready();
+	IPC::Get().ready();
 
 	while(true)
 	{
 		this->on_periodic();
 
-		std::shared_ptr<Mail> mail = mailbox.peek();
+		std::shared_ptr<Mail> mail = mailbox.tail(200U);
 		if(mail)
 		{
 			this->on_message(*mail);
@@ -47,6 +43,5 @@ void Worker::runnable(void)
 			}
 		}
 	}
-
 	this->on_stop();
 }

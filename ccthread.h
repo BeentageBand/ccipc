@@ -11,49 +11,39 @@
 #include <memory>
 #include <vector>
 #include "ccipc_types.h"
+#include "ccsemaphore.h"
 
-namespace ipc
+namespace cc
 {
 
 class Thread
 {
 public:
-	struct Attributes
-	{
-		Attributes(uint32_t const priority, size_t const stack_size, std::vector<TID_T> & dependencies)
-		: priority(priority),
-		  stack_size(stack_size),
-		  dependencies(dependencies)
-		{}
-
-		uint32_t priority;
-		size_t stack_size;
-		std::vector<TID_T> dependencies;
-	};
-
 	class Cbk
 	{
 	public:
-		Cbk(TID_T const tid, Attributes & attr);
+		Cbk(void);
 		virtual ~Cbk(void);
 		virtual int register_thread(Thread & thread) = 0;
-		virtual int create_thread(void) = 0;
-		virtual int cancel_thread(void) = 0;
+		virtual int create_thread(Thread & thread) = 0;
+		virtual int cancel_thread(void &* exit) = 0;
 		virtual int join_thread(void) = 0;
 	};
 
 public:
-	TID_T const tid;
+	ipc::TID_T const tid;
 private:
-	std::unique_ptr<Cbk> thread_cbk;
+	std::shared_ptr<Thread::Cbk> cbk;
+	Semaphore sem;
 
 public:
-	Thread(TID_T const tid, Attributes & attr);
+	explicit Thread(ipc::TID_T const tid);
 	virtual ~Thread(void);
 
 	void run(void);
 	void wait(void);
 	void wait(uint32_t const wait_ms);
+	void ready(void);
 
 protected:
 	virtual void runnable(void) = 0;

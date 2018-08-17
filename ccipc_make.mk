@@ -6,9 +6,10 @@ ccipc.h \
 ccipc_types.h \
 ccmail.h \
 ccmailbox.h \
+ccmutex.h \
 ccnode.h \
 ccpublisher.h \
-ccsubscribable.h \
+ccsemaphore.h \
 ccthread.h \
 ccworker.h \
 ccworker_mailist.h \
