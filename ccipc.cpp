@@ -29,13 +29,12 @@ IPC & IPC::IPC(std::shared_ptr<IPC::Cbk> cbk)
 }
 
 IPC::IPC(std::shared_ptr<IPC::Cbk> cbk)
-: thread_pool,
+: cbk(cbk),
+thread_pool(),
 mailbox_pool(),
 publisher(),
-cbk(cbk)
-{
-   this->publisher.set(*this);
-}
+pool_mux()
+{}
 
 IPC::~IPC(void)
 {
@@ -52,17 +51,23 @@ ipc::TID_T IPC::self(void)
 
 void IPC::wait(ipc::TID_T const tid, ipc::Clock_T const wait_ms)
 {
-   this->thread_pool[tid].wait(wait_ms);
+    if(this->pool_mux.lock(wait_ms))
+        this->thread_pool[tid].wait(wait_ms);
+    this->pool_mux.unlock();
 }
 
 void IPC::ready(void)
 {
-   this->thread_pool[tid].ready();
+    if(this->pool_mux.lock(wait_ms))
+        this->thread_pool[tid].ready();
+    this->pool_mux.unlock();
 }
 
 void IPC::run(ipc::TID_T const tid)
 {
-   this->thread_pool[tid].run();
+    if(this->pool_mux.lock(wait_ms))
+        this->thread_pool[tid].run();
+    this->pool_mux.unlock();
 }
 
 //Clock 
@@ -82,11 +87,21 @@ void IPC::sleep(ipc::Clock_T const wait_ms)
 }
 
 //Mailbox
+void IPC::send(ipc::MID_T const mid, ipc::TID_T const receiver)
+{
+    Mail mail(mid, receiver);
+
+    if(this->pool_mux.lock(wait_ms))
+        this->mailbox_pool[receiver]->push(mail);
+    this->pool_mux.unlock();
+}
 template<>
 void IPC::send(ipc::MID_T const mid, ipc::TID_T const receiver, std::stringstream & payload)
 {
    Mail mail(mid, this->self(), receiver, payload);
-   this->mailbox_pool[receiver]->push(mail);
+   if(this->pool_mux.lock(wait_ms))
+     this->mailbox_pool[receiver]->push(mail);
+   this->pool_mux.unlock();
 }
 
 template<typename T>
@@ -114,6 +129,7 @@ bool IPC::retrieve_mail(Mail & mail, Clock_T const wait_ms, ipc::MID_T (&mailist
 
 bool IPC::retrieve_mail(Mail & mail, Clock_T const wait_ms, std::vector<ipc::MID_T> & mailist)
 {
+   if(!this->pool_mux.lock(wait_ms)) return false;
    auto & mbx = this->mailbox_pool[this->self()];
    ipc::Clock_T tout = this->clock + wait_ms;
    std::shared_ptr<Mail> mptr;  
@@ -125,6 +141,7 @@ bool IPC::retrieve_mail(Mail & mail, Clock_T const wait_ms, std::vector<ipc::MID
         mptr = mbx.tail(mid, tout - this->clock);
 		if(mptr) {break;}
    }
+   this->pool_mux.unlock();
    return mptr;
 }
 

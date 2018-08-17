@@ -11,6 +11,7 @@
 #include <memory>
 #include <set>
 #include "ccipc_types.h"
+#include "ccmutex.h"
 #include "ccmailbox.h"
 #include "ccthread.h"
 
@@ -46,10 +47,11 @@ public:
    friend class Timer;
 
 protected:
+    std::shared_ptr<IPC::Cbk> cbk;
     Thread_Set thread_pool;
     Mailbox_Set mailbox_pool;
     Publisher publisher;
-    std::shared_ptr<IPC::Cbk> cbk;
+    Mutex pool_mux;
 
 private:
    IPC(std::shared_ptr<IPC::Cbk> cbk);
@@ -72,6 +74,7 @@ public:
    void sleep(ipc::Clock_T const ms);
 
    //Mailbox
+   void send(ipc::MID_T const mid, ipc::TID_T const receiver);
    template<typename T>
    void send(ipc::MID_T const mid, ipc::TID_T const receiver, T & payload);
    bool retrieve_mail(Mail & mail, Clock_T const wait_ms);

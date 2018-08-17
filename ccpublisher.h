@@ -11,7 +11,6 @@
 #include <map>
 #include <set>
 #include "ccipc.h"
-#include "ccmail.h"
 
 namespace cc
 {
@@ -24,6 +23,7 @@ public:
 private:
 	Subscription subscription_list;
 	IPC & ipc;
+	Mutex sub_mux;
 public:
 	Publisher(IPC & ipc);
 	virtual ~Publisher(void);
