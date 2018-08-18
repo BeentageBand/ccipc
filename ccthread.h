@@ -46,7 +46,7 @@ public:
 	void ready(void);
 
 protected:
-	virtual void runnable(void) = 0;
+	virtual void runnable(void){};
 };
 
 }

@@ -12,7 +12,7 @@ class Mutex
     {
         Cbk(void);
         virtual ~Cbk(void);
-        virtual bool lock(IPC_Clock_T const wait_ms) = 0;
+        virtual bool lock(ipc::Clock_T const wait_ms) = 0;
         virtual bool unlock(void) = 0;
     };
     private:

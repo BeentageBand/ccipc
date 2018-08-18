@@ -19,16 +19,6 @@ namespace cc
 
 class Mailbox
 {
-	class Cbk
-	{
-		protected:
-		IPC & ipc;
-		public:
-		explicit Cbk(IPC & ipc);
-		virtual ~Cbk(void);
-		virtual void subscribe(Mailbox & mbx) = 0;
-		virtual void unsubscribe(Mailbox & mbx) = 0;
-	};
 public:
 	ipc::TID_T const tid;
 private:

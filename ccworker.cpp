@@ -10,10 +10,10 @@
 #include "ccmailbox.h"
 #include "ccworker.h"
 
-using namespace ipc;
+using namespace cc;
 
 Worker::Worker(TID_T const tid)
-:Thread(tid)
+: Node<Thread>(tid)
 {
 }
 
@@ -31,17 +31,16 @@ void Worker::runnable(void)
 
 	while(true)
 	{
-		this->on_periodic();
-
-		std::shared_ptr<Mail> mail = mailbox.tail(200U);
-		if(mail)
+		Mail mail;
+		if(IPC::Get().retrieve(mail, 200U))
 		{
-			this->on_message(*mail);
-			if(WORKER_BCT_SHUTDOWN_MID == mail->mid)
+			this->on_message(mail);
+			if(WORKER_PBC_SHUTDOWN_MID == mail.mid)
 			{
 				break;
 			}
 		}
+		this->on_periodic();
 	}
 	this->on_stop();
 }

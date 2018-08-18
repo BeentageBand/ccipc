@@ -14,7 +14,8 @@
 namespace cc
 {
 
-class Node
+template<class T>
+class Node : public T
 {
 public:
 	uint32_t const nid;
@@ -25,8 +26,8 @@ public:
 
 protected:
 	virtual void on_start(void) = 0;
-	virtual void on_message(Mail & mail) = 0;
-	virtual void on_periodic(void) = 0;
+	virtual void on_mail(Mail & mail) = 0;
+	virtual void on_loop(void) = 0;
 	virtual void on_stop(void) = 0;
 };
 

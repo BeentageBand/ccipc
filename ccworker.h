@@ -10,11 +10,12 @@
 
 #include "ccmail.h"
 #include "ccthread.h"
+#include "ccnode.h"
 
 namespace ipc
 {
 
-class Worker : public Thread, public Node
+class Worker : public Node<Thread>
 {
 public:
 	Worker(TID_T const tid);

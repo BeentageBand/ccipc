@@ -194,6 +194,12 @@ void IPC::publish(ipc::MID_T const mid, std::stringstream & payload)
    this->publisher.publish(mail);
 }
 
+void IPC::publish(ipc::MID_T const mid)
+{
+    std::stringstream spl;
+    this->publish(mid, spl);
+}
+
 void IPC::broadcast(ipc::MID_T const mid, std::stringstream & payload)
 {
    Mail mail(mid, this->self(), 0, payload);
@@ -202,4 +208,10 @@ void IPC::broadcast(ipc::MID_T const mid, std::stringstream & payload)
       mail.receiver = mbx_ptr->tid;
       mbx_ptr->push(mail);
    }
+}
+
+void IPC::broadcast(ipc::MID_T const mid)
+{
+    std::stringstream spl;
+    this->broadcast(mid, spl);
 }

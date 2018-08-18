@@ -35,6 +35,9 @@ public:
     virtual void (ipc::Clock_T const wait_ms) = 0;
     virtual std::shared_ptr<Thread::Cbk> create_thread(void) = 0;
     virtual std::shared_ptr<Mailbox::Cbk> create_mailbox(void) = 0;
+    virtual std::shared_ptr<Mutex::Cbk> create_mutex(void) = 0;
+    virtual std::shared_ptr<Semaphore::Cbk> create_semaphore(void) = 0;
+    virtual std::shared_ptr<Cond_Var::Cbk> create_cond_var(void) = 0;
    };
 
    friend class IPC::Cbk;
@@ -90,7 +93,9 @@ public:
    bool unsubscribe(ipc::MID_T const (& mailist)[N]);
    bool unsubscribe(std::vector<ipc::MID_T> const & mailist);
    void publish(ipc::MID_T const mid, std::stringstream & payload);
+   void publish(ipc::MID_T const mid);
    void broadcast(ipc::MID_T const mid, std::stringstream & payload);
+   void broadcast(ipc::MID_T const mid);
 };
 
 }
