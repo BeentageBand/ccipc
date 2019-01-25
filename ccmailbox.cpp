@@ -76,7 +76,6 @@ shared_ptr<Mail> Mailbox::tail(IPC_MID_T const mid, IPC_Clock_T const wait_ms)
    {
       sh_mail = make_shared<Mail>(*found);
       this->queue.erase(found);
-      break;
    }
 
    this->mux->unlock();
