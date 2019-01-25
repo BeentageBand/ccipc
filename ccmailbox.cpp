@@ -7,6 +7,7 @@
 #include <algorithm>
 #include "ccmailbox.h"
 
+using namespace std;
 using namespace cc;
 
 inline bool Is_This_Mail(Mail & a, Mail & b)
@@ -14,74 +15,71 @@ inline bool Is_This_Mail(Mail & a, Mail & b)
    return a.mid == b.mid;
 }
 
-Mailbox::Cbk::Cbk(IPC & ipc)
-: ipc(ipc)
+Mailbox::Mux::Mux(void)
 {}
+Mailbox::Mux::~Mux(void){}
 
-Mailbox::Cbk::~Cbk(void){}
-
-Mailbox::Mailbox(TID_T const tid)
+Mailbox::Mailbox(IPC_TID_T const tid, shared_ptr<Mailbox::Mux> mux)
 :tid(tid),
 queue(),
-mux(),
-cond(this->mux)
-cbk(IPC::Get().cbk->create_mailbox())
+mux(mux)
 {
-
 }
 
 Mailbox::~Mailbox(void){}
 
 void Mailbox::push(Mail & mail)
 {
-   if(this->mux.lock(200))
+   if(this->mux->lock(200))
    {
       this->queue.push_front(mail);
-      this->mux.unlock();
-      this->cond.signal();
+      this->mux->unlock();
+      this->mux->signal();
    }
 }
 
-std::shared_ptr<Mail> Mailbox::tail(ipc::Clock_T const wait_ms)
+shared_ptr<Mail> Mailbox::tail(IPC_Clock_T const wait_ms)
 {
-   std::shared_ptr<Mail> sh_mail;
+   shared_ptr<Mail> sh_mail;
 
-   if(!this->mux.lock(wait_ms)) return sh_mail;
+   if(!this->mux->lock(wait_ms)) return sh_mail;
 
    while(this->queue.empty())
    {
-      if(this->cond->wait(wait_ms)) return sh_mail;
+       if(!this->mux->wait(wait_ms)) return sh_mail;
    }
 
-   sh_mail = std::make_shared<Mail>(this->queue.back());
+   sh_mail = make_shared<Mail>(this->queue.back());
    this->queue.pop_back();
-   this->mux.unlock();
+   this->mux->unlock();
 
    return sh_mail;
 }
 
-std::shared_ptr<Mail> Mailbox::tail(ipc::MID_T const mid, ipc::Clock_T const wait_ms)
+shared_ptr<Mail> Mailbox::tail(IPC_MID_T const mid, IPC_Clock_T const wait_ms)
 {
-   std::shared_ptr<Mail> sh_mail;
-   if(!this->mux.lock(wait_ms)) return sh_mail;
-   Mail mail(mid);
+   shared_ptr<Mail> sh_mail;
+   if(!this->mux->lock(wait_ms)) return sh_mail;
 
-    while(this->queue.empty())
+   while(this->queue.empty())
    {
-         if(!this->cond.wait(wait_ms)) return sh_mail;
+         if(!this->mux->wait(wait_ms)) return sh_mail;
    }
 
-   std::deque<Mail>::iterator found = std::find_if(this->queue.begin(), this->queue.end(),
-         Is_This_Mail);
+   Mail::Builder builder;
+   Mail mail = builder.with_mid(mid).build();
+
+   deque<Mail>::iterator found = find_first_of(this->queue.begin(), this->queue.end(),
+                                            &mail, &mail + 1, Is_This_Mail);
 
    if(this->queue.end() == found)
    {
-      sh_mail = std::make_shared<Mail>(*found);
+      sh_mail = make_shared<Mail>(*found);
       this->queue.erase(found);
       break;
    }
 
-   this->mux.unlock();
+   this->mux->unlock();
 
    return sh_mail;
 

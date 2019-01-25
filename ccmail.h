@@ -10,7 +10,7 @@
 
 #include <cstdlib>
 #include <sstream>
-#include "ccipc_types.h"
+#include "ipc_types.h"
 
 namespace cc
 {
@@ -18,77 +18,68 @@ namespace cc
 class Mail
 {
 public:
-	ipc::MID_T const mid;
+    class Builder
+    {
+        private:
+        IPC_MID_T mid;
+        IPC_TID_T receiver;
+        IPC_TID_T sender;
+        std::stringstream payload;
+
+        public:
+        Builder(void);
+        ~Builder(void);
+
+        template<typename T>
+        Builder & with_payload(T & payload)
+        {
+            this->payload << payload;
+            return *this;
+        }
+
+        Builder & with_mid(IPC_MID_T const mid);
+        Builder & with_receiver(IPC_TID_T const tid);
+        Builder & with_sender(IPC_TID_T const tid);
+        Mail build(void);
+    };
+
+    friend class Mail::Builder;
+
+	IPC_MID_T const mid;
+
 private:
-	ipc::TID_T receiver;
-	ipc::TID_T sender;
+	IPC_TID_T receiver;
+	IPC_TID_T sender;
 	std::stringstream payload;
 
+private:
+	Mail(void);
+
 public:
-	explicit Mail(MID_T const mid)
-	: mid(mid), 
-	sender(TID_MAX),
-	receiver(TID_MAX),
-	payload()
-	{}
+	Mail(Mail const & mail);
 
-	Mail(Mail & mail)
-	: mid(mail.mid),
-	  receiver(mail.get_receiver()),
-      sender(mail.get_sender()),
-	  payload()
-	{
-		this->payload << this->get_payload().str();
-	}
+	Mail(IPC_MID_T const mid, IPC_TID_T const receiver);
 
-	Mail(MID_T const mid, TID_T const receiver)
-	: mid(mid), receiver(receiver), sender(TID_MAX), payload()
-	{}
+	virtual ~Mail(void);
+    
+	inline IPC_TID_T get_receiver(void) const { return this->receiver;}
 
-	~Mail(void);
-
-	inline ipc::TID_T get_receiver(void){ return this->receiver;}
-
-	inline ipc::TID_T get_sender(void){ return this->sender;}
+	inline IPC_TID_T get_sender(void) const { return this->sender;}
 
 	inline std::stringstream & get_payload(void) {return this->payload;}
 
-	inline size_t payload_size(void) { return this->payload.width();}
+	inline size_t get_payload_size(void) { return this->payload.width();}
 
-	inline void set_sender(TID_T const tid){ this->sender = tid;}
-
-	template<typename T>
-	std::stringstream & operator>>(T & data)
-	{
-		for(char * i = reinterpret_cast<char *>(&data);
-				i < reinterpret_cast<char *>(&data)+sizeof(data); ++i)
-		{
-			this->payload >> (*i);
-		}
-		return this->payload;
-	}
+	inline void set_sender(IPC_TID_T const tid) { this->sender = tid;}
 
 	template<typename T>
-	std::stringstream & operator<<(T & data)
-	{
-		for(char * i = reinterpret_cast<char *>(&data);
-				i < reinterpret_cast<char *>(&data)+sizeof(data); ++i)
-		{
-			this->payload << (*i) ;
-		}
-		return this->payload;
-	}
+	std::stringstream & operator>>(T & data);
 
-	Mail & operator=(Mail & mail)
-	{
-		if(this != &mail)
-		{
-			this->receiver = mail.get_receiver();
-			this->sender = mail.get_sender();
-			this->payload << this->get_payload().str();
-		}
-		return *this;
-	}
+	template<typename T>
+	std::stringstream & operator<<(T & data);
+
+	Mail & operator=(Mail const & mail);
+
 };
 
 }

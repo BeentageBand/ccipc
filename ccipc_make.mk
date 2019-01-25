@@ -3,7 +3,6 @@ define $(_flavor_)_$(_feat_)_MAKE
 $(_flavor_)_$(_feat_)_inc=\
 ccdispatcher.h \
 ccipc.h \
-ccipc_types.h \
 ccmail.h \
 ccmailbox.h \
 ccmutex.h \
@@ -15,11 +14,12 @@ ccworker.h \
 ccworker_mailist.h \
 
 $(_flavor_)_$(_feat_)_lib_objs=\
-ccdispatcher \
-ccipc \
-ccmailbox \
-ccpublisher \
 ccthread \
+ccmail \
+ccmailbox \
+#ccdispatcher \
+ccipc \
+ccpublisher \
 ccworker \
 
 $(_flavor_)_$(_feat_)_lib=ccipc

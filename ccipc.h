@@ -10,7 +10,7 @@
 
 #include <memory>
 #include <set>
-#include "ccipc_types.h"
+#include "ipc_types.h"
 #include "ccmutex.h"
 #include "ccmailbox.h"
 #include "ccthread.h"
@@ -29,10 +29,10 @@ public:
    public:
     Cbk(void);
     virtual ~Cbk(void);
-    virtual void sleep(ipc::Clock_T const wait_ms) = 0;
-    virtual ipc::Clock_T clock(void) = 0;
-    virtual ipc::TID_T self_thread(void) = 0;
-    virtual void (ipc::Clock_T const wait_ms) = 0;
+    virtual void sleep(IPC_Clock_T const wait_ms) = 0;
+    virtual IPC_Clock_T clock(void) = 0;
+    virtual IPC_TID_T self_thread(void) = 0;
+    virtual void (IPC_Clock_T const wait_ms) = 0;
     virtual std::shared_ptr<Thread::Cbk> create_thread(void) = 0;
     virtual std::shared_ptr<Mailbox::Cbk> create_mailbox(void) = 0;
     virtual std::shared_ptr<Mutex::Cbk> create_mutex(void) = 0;
@@ -40,7 +40,7 @@ public:
     virtual std::shared_ptr<Cond_Var::Cbk> create_cond_var(void) = 0;
    };
 
-   friend class IPC::Cbk;
+   friend class IPC_Cbk;
    friend class Cond;
    friend class Thread;
    friend class Mailbox;
@@ -50,52 +50,52 @@ public:
    friend class Timer;
 
 protected:
-    std::shared_ptr<IPC::Cbk> cbk;
+    std::shared_ptr<IPC_Cbk> cbk;
     Thread_Set thread_pool;
     Mailbox_Set mailbox_pool;
     Publisher publisher;
     Mutex pool_mux;
 
 private:
-   IPC(std::shared_ptr<IPC::Cbk> cbk);
+   IPC(std::shared_ptr<IPC_Cbk> cbk);
 
 public:
    virtual ~IPC(void);
 
    static IPC & Get(void);
-   static IPC & Get(std::shared_ptr<IPC::Cbk> cbk);
+   static IPC & Get(std::shared_ptr<IPC_Cbk> cbk);
 
    //Thread
-   ipc::TID_T self(void);
-   void wait(ipc::TID_T const tid, ipc::Clock_T const wait_ms);
+   IPC_TID_T self(void);
+   void wait(IPC_TID_T const tid, IPC_Clock_T const wait_ms);
    void ready(void);
-   void run(ipc::TID_T const tid);
+   void run(IPC_TID_T const tid);
 
    //Clock 
-   ipc::Clock_T clock(void);
-   bool is_clock_elapsed(ipc::Clock_T const ms);
-   void sleep(ipc::Clock_T const ms);
+   IPC_Clock_T clock(void);
+   bool is_clock_elapsed(IPC_Clock_T const ms);
+   void sleep(IPC_Clock_T const ms);
 
    //Mailbox
-   void send(ipc::MID_T const mid, ipc::TID_T const receiver);
+   void send(IPC_MID_T const mid, IPC_TID_T const receiver);
    template<typename T>
-   void send(ipc::MID_T const mid, ipc::TID_T const receiver, T & payload);
+   void send(IPC_MID_T const mid, IPC_TID_T const receiver, T & payload);
    bool retrieve_mail(Mail & mail, Clock_T const wait_ms);
    template <size_t N>
-   bool retrieve_mail(Mail & mail, Clock_T const wait_ms, ipc::MID_T (&mailist)[N]);
-   bool retrieve_mail(Mail & mail, Clock_T const wait_ms, std::vector<ipc::MID_T> & mailist);
+   bool retrieve_mail(Mail & mail, Clock_T const wait_ms, IPC_MID_T (&mailist)[N]);
+   bool retrieve_mail(Mail & mail, Clock_T const wait_ms, std::vector<IPC_MID_T> & mailist);
 
    //Publisher
    template<uint32_t N>
-   bool subscribe(ipc::MID_T const (& mailist)[N]);
-   bool subscribe(std::vector<ipc::MID_T> const & mailist);
+   bool subscribe(IPC_MID_T const (& mailist)[N]);
+   bool subscribe(std::vector<IPC_MID_T> const & mailist);
    template<uint32_t N>
-   bool unsubscribe(ipc::MID_T const (& mailist)[N]);
-   bool unsubscribe(std::vector<ipc::MID_T> const & mailist);
-   void publish(ipc::MID_T const mid, std::stringstream & payload);
-   void publish(ipc::MID_T const mid);
-   void broadcast(ipc::MID_T const mid, std::stringstream & payload);
-   void broadcast(ipc::MID_T const mid);
+   bool unsubscribe(IPC_MID_T const (& mailist)[N]);
+   bool unsubscribe(std::vector<IPC_MID_T> const & mailist);
+   void publish(IPC_MID_T const mid, std::stringstream & payload);
+   void publish(IPC_MID_T const mid);
+   void broadcast(IPC_MID_T const mid, std::stringstream & payload);
+   void broadcast(IPC_MID_T const mid);
 };
 
 }

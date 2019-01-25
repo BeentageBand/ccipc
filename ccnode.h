@@ -8,7 +8,7 @@
 #ifndef CCNODE_H_
 #define CCNODE_H_
 
-#include "ccipc_types.h"
+#include "ipc_types.h"
 #include "ccmail.h"
 
 namespace cc

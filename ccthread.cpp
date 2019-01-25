@@ -4,11 +4,10 @@
  *  Created on: Aug 31, 2017
  *        Author: puchh
  */
-
 #include "ccthread.h"
-#include "ccipc.h"
 
 using namespace cc;
+using namespace std;
 
 Thread::Cbk::Cbk(void)
 {}
@@ -16,10 +15,15 @@ Thread::Cbk::Cbk(void)
 Thread::Cbk::~Cbk(void)
 {}
 
-Thread::Thread(ipc::TID_T const tid)
-: tid(tid),
-cbk(IPC::Get().cbk->create_thread()),
-sem(1U)
+Thread::Sem::Sem(void)
+{}
+
+Thread::Sem::~Sem(void)
+{}
+
+Thread::Thread(IPC_TID_T const tid, shared_ptr<Thread::Sem> sem,
+                shared_ptr<Thread::Cbk> cbk)
+: tid(tid), sem(sem), cbk(cbk)
 {
     if(this->cbk)
     {
@@ -29,31 +33,32 @@ sem(1U)
 
 Thread::~Thread(void)
 {
-    if(this->thread_cbk)
+    if(this->cbk)
     {
-        this->thread_cbk->cancel_thread();
+        void * exit = nullptr;
+        this->cbk->cancel_thread(exit);
     }
 }
 
 void Thread::run(void)
 {
-    if(this->thread_cbk)
+    if(this->cbk)
     {
-        this->thread_cbk->create_thread(this->tid);
+        this->cbk->create_thread(*this);
     }
 }
 
 void Thread::wait(void)
 {
-    this->sem.wait();
+    this->sem->wait();
 }
 
 void Thread::wait(uint32_t const wait_ms)
 {
-    this->sem.wait(wait_ms);
+    this->sem->wait(wait_ms);
 }
 
 void Thread::ready(void)
 {
-    this->sem.ready();
+    this->sem->ready();
 }
