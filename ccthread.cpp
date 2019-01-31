@@ -15,13 +15,7 @@ Thread::Cbk::Cbk(void)
 Thread::Cbk::~Cbk(void)
 {}
 
-Thread::Sem::Sem(void)
-{}
-
-Thread::Sem::~Sem(void)
-{}
-
-Thread::Thread(IPC_TID_T const tid, shared_ptr<Thread::Sem> sem,
+Thread::Thread(IPC_TID_T const tid, shared_ptr<Semaphore> sem,
                 shared_ptr<Thread::Cbk> cbk)
 : tid(tid), sem(sem), cbk(cbk)
 {
@@ -60,5 +54,5 @@ void Thread::wait(uint32_t const wait_ms)
 
 void Thread::ready(void)
 {
-    this->sem->ready();
+    this->sem->signal(IPC_MAX_TID);
 }

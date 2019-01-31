@@ -10,7 +10,7 @@
 
 #include <memory>
 #include <vector>
-#include "ipc_types.h"
+#include "ccsemaphore.h"
 
 namespace cc
 {
@@ -29,24 +29,14 @@ public:
 		virtual int join_thread(void) = 0;
 	};
 
-    class Sem
-    {
-        public:
-        Sem(void);
-        virtual ~Sem(void);
-        virtual void wait(void) = 0;
-        virtual void wait(uint32_t wait_ms) = 0;
-        virtual void ready(void) = 0;
-    };
-
 public:
 	IPC_TID_T const tid;
 private:
 	std::shared_ptr<Thread::Cbk> cbk;
-    std::shared_ptr<Thread::Sem> sem;
+    std::shared_ptr<Semaphore> sem;
 
 public:
-	Thread(IPC_TID_T const tid, std::shared_ptr<Thread::Sem> sem, std::shared_ptr<Thread::Cbk> cbk);
+	Thread(IPC_TID_T const tid, std::shared_ptr<Semaphore> sem, std::shared_ptr<Thread::Cbk> cbk);
 	virtual ~Thread(void);
 
 	void run(void);
