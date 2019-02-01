@@ -10,11 +10,13 @@
 
 #include <memory>
 #include <vector>
-#include "ccsemaphore.h"
+
+#include "ccbarrier.h"
 
 namespace cc
 {
 
+class Factory;
 class Thread
 {
 public:
@@ -33,16 +35,18 @@ public:
 	IPC_TID_T const tid;
 private:
 	std::shared_ptr<Thread::Cbk> cbk;
-    std::shared_ptr<Semaphore> sem;
+    std::shared_ptr<Barrier> barrier;
 
 public:
-	Thread(IPC_TID_T const tid, std::shared_ptr<Semaphore> sem, std::shared_ptr<Thread::Cbk> cbk);
+	Thread(IPC_TID_T const tid, std::shared_ptr<Barrier> barrier, std::shared_ptr<Thread::Cbk> cbk);
+	Thread(IPC_TID_T const tid, uint32_t const num_dependencies, Factory & factory);
 	virtual ~Thread(void);
 
 	void run(void);
 	void wait(void);
-	void wait(uint32_t const wait_ms);
-	void ready(void);
+	bool wait(IPC_Clock_T const wait_ms);
+    void ready(void);
+	void join(void);
 
 protected:
 	virtual void runnable(void){};

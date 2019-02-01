@@ -11,33 +11,24 @@
 #include <memory>
 #include <deque>
 
+#include "ccfactory.h"
+#include "cccond_var.h"
 #include "ccmail.h"
 
 namespace cc 
 {
-
 class Mailbox
 {
-    public:
-    class Mux
-    {
-        public:
-        Mux(void);
-        virtual ~Mux(void);
-
-        virtual bool lock(uint32_t const wait_ms) = 0;
-        virtual bool wait(uint32_t const wait_ms) = 0;
-        virtual void unlock(void) = 0;
-        virtual void signal(void) = 0;
-    };
-
     public:
 	IPC_TID_T const tid;
     private:
 	std::deque<Mail> queue;
-    std::shared_ptr<Mailbox::Mux> mux;
+    std::shared_ptr<Mutex> mux;
+    std::shared_ptr<Cond_Var> cv;
+
     public:
-	Mailbox(IPC_TID_T const tid, std::shared_ptr<Mailbox::Mux> mux);
+	Mailbox(IPC_TID_T const tid, std::shared_ptr<Mutex> mux, std::shared_ptr<Cond_Var> cv);
+    Mailbox(IPC_TID_T const tid, Factory & factory);
 	virtual ~Mailbox(void);
 
 	void push(Mail & mail);

@@ -15,16 +15,18 @@ inline bool Is_This_Mail(Mail & a, Mail & b)
    return a.mid == b.mid;
 }
 
-Mailbox::Mux::Mux(void)
-{}
-Mailbox::Mux::~Mux(void){}
-
-Mailbox::Mailbox(IPC_TID_T const tid, shared_ptr<Mailbox::Mux> mux)
+Mailbox::Mailbox(IPC_TID_T const tid, shared_ptr<Mutex> mux, shared_ptr<Cond_Var> cv)
 :tid(tid),
 queue(),
-mux(mux)
+mux(mux),
+cv(cv)
 {
+    this->cv->with_mutex(this->mux);
 }
+
+Mailbox::Mailbox(IPC_TID_T const tid, Factory & factory)
+:Mailbox(tid, factory.create_mutex(), factory.create_cond_var())
+{}
 
 Mailbox::~Mailbox(void){}
 
@@ -34,7 +36,7 @@ void Mailbox::push(Mail & mail)
    {
       this->queue.push_front(mail);
       this->mux->unlock();
-      this->mux->signal();
+      this->cv->signal();
    }
 }
 
@@ -46,7 +48,7 @@ shared_ptr<Mail> Mailbox::tail(IPC_Clock_T const wait_ms)
 
    while(this->queue.empty())
    {
-       if(!this->mux->wait(wait_ms)) return sh_mail;
+       if(!this->cv->wait(wait_ms)) return sh_mail;
    }
 
    sh_mail = make_shared<Mail>(this->queue.back());
@@ -63,7 +65,7 @@ shared_ptr<Mail> Mailbox::tail(IPC_MID_T const mid, IPC_Clock_T const wait_ms)
 
    while(this->queue.empty())
    {
-         if(!this->mux->wait(wait_ms)) return sh_mail;
+         if(!this->cv->wait(wait_ms)) return sh_mail;
    }
 
    Mail::Builder builder;

@@ -4,6 +4,7 @@
  *  Created on: Aug 31, 2017
  *        Author: puchh
  */
+#include "ccfactory.h"
 #include "ccthread.h"
 
 using namespace cc;
@@ -15,15 +16,19 @@ Thread::Cbk::Cbk(void)
 Thread::Cbk::~Cbk(void)
 {}
 
-Thread::Thread(IPC_TID_T const tid, shared_ptr<Semaphore> sem,
+Thread::Thread(IPC_TID_T const tid, shared_ptr<Barrier> barrier,
                 shared_ptr<Thread::Cbk> cbk)
-: tid(tid), sem(sem), cbk(cbk)
+: tid(tid), barrier(barrier), cbk(cbk)
 {
     if(this->cbk)
     {
         this->cbk->register_thread(*this);
     }
 }
+
+Thread::Thread(IPC_TID_T const tid, uint32_t const num_dependencies, Factory & factory)
+: Thread(tid, factory.create_barrier(num_dependencies), factory.create_thread_cbk())
+{}
 
 Thread::~Thread(void)
 {
@@ -44,15 +49,19 @@ void Thread::run(void)
 
 void Thread::wait(void)
 {
-    this->sem->wait();
+    this->barrier->wait();
 }
 
-void Thread::wait(uint32_t const wait_ms)
+bool Thread::wait(IPC_Clock_T const wait_ms)
 {
-    this->sem->wait(wait_ms);
+    return this->barrier->wait(wait_ms);
 }
 
 void Thread::ready(void)
 {
-    this->sem->signal(IPC_MAX_TID);
+    this->barrier->ready();
+}
+void Thread::join(void)
+{
+    this->cbk->join_thread();
 }

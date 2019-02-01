@@ -1,7 +1,10 @@
 define $(_flavor_)_$(_feat_)_MAKE
  
 $(_flavor_)_$(_feat_)_inc=\
+ccbarrier.h \
+cccond_var.h \
 ccdispatcher.h \
+ccfactory.h \
 ccipc.h \
 ccmail.h \
 ccmailbox.h \
