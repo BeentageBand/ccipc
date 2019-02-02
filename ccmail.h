@@ -58,7 +58,7 @@ private:
 public:
 	Mail(Mail const & mail);
 
-	Mail(IPC_MID_T const mid, IPC_TID_T const receiver);
+	Mail(IPC_MID_T const mid, IPC_TID_T const receiver, IPC_TID_T const sender);
 
 	virtual ~Mail(void);
     
@@ -70,7 +70,7 @@ public:
 
 	inline size_t get_payload_size(void) { return this->payload.width();}
 
-	inline void set_sender(IPC_TID_T const tid) { this->sender = tid;}
+	inline void set_receiver(IPC_TID_T const tid) { this->receiver = tid;}
 
 	template<typename T>
 	std::stringstream & operator>>(T & data);

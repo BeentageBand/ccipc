@@ -5,6 +5,7 @@
 #include "cccond_var.h"
 #include "ccmutex.h"
 #include "ccsemaphore.h"
+#include "ccpublisher.h"
 #include "ccthread.h"
 
 namespace cc
@@ -21,6 +22,7 @@ class Factory
     virtual std::shared_ptr<Cond_Var> create_cond_var(void) = 0;
     virtual std::shared_ptr<Thread::Cbk> create_thread_cbk(void) = 0;
     virtual std::shared_ptr<Barrier> create_barrier(uint32_t const resources) = 0;
+    virtual std::shared_ptr<Publisher::Cbk> create_publisher_cbk(void) = 0;
 };
 
 }

@@ -20,9 +20,9 @@ $(_flavor_)_$(_feat_)_lib_objs=\
 ccthread \
 ccmail \
 ccmailbox \
+ccpublisher \
 #ccdispatcher \
 ccipc \
-ccpublisher \
 ccworker \
 
 $(_flavor_)_$(_feat_)_lib=ccipc

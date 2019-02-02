@@ -32,8 +32,7 @@ Mail::Builder & Mail::Builder::with_sender(IPC_TID_T const tid)
 
 Mail Mail::Builder::build(void)
 {
-    Mail mail(this->mid, this->receiver);
-    mail.set_sender(this->sender);
+    Mail mail(this->mid, this->receiver, this->sender);
     mail << this->payload;
     return mail;
 }
@@ -54,8 +53,8 @@ Mail::Mail(Mail const & mail)
     this->payload << this->get_payload().str();
 }
 
-Mail::Mail(IPC_MID_T const mid, IPC_TID_T const receiver)
-: mid(mid), receiver(receiver), sender(IPC_MAX_TID), payload()
+Mail::Mail(IPC_MID_T const mid, IPC_TID_T const receiver, IPC_TID_T const sender)
+: mid(mid), receiver(receiver), sender(sender), payload()
 {}
 
 Mail::~Mail(void){}

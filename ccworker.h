@@ -18,7 +18,7 @@ namespace ipc
 class Worker : public Node<Thread>
 {
 public:
-	Worker(TID_T const tid);
+	Worker(TID_T const tid, std::shared_ptr<Barrier> barrier, shared_ptr<Thread::Cbk> cbk);
 	virtual ~Worker(void);
 private:
 	void runnable(void);
