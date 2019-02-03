@@ -42,18 +42,27 @@ std::set<IPC_TID_T> Publisher::find_subscription(IPC_MID_T const mid)
 
 void Publisher::publish(IPC_MID_T const mid, IPC_TID_T const receiver, IPC_TID_T const sender)
 {
-	if (this->subscriptions[mid].empty()) return ;
-    Mail::Builder builder;
-    builder.with_sender(sender);
-    builder.with_receiver(receiver);
+    set<IPC_TID_T> subscription = this->find_subscription(mid);
+    if(subscription.empty()) return;
 
-	for(auto & tid : this->subscriptions[mid])
+    Mail::Builder builder;
+    builder.with_mid(mid);
+    builder.with_receiver(receiver);
+    builder.with_sender(sender);
+
+    this->publish(builder, subscription);
+}
+
+void Publisher::publish(Mail::Builder & builder, set<IPC_TID_T> & subscription)
+{
+	for(auto & tid : subscription)
 	{
-        builder.with_mid(mid);
+        builder.with_receiver(tid);
         Mail mail = builder.build();
         cbk->send(mail);
 	}
 }
+
 
 bool Publisher::subscribe_once(IPC_MID_T const mid, IPC_TID_T const tid)
 {

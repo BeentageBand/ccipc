@@ -10,6 +10,7 @@
 
 #include <map>
 #include <set>
+#include <sstream>
 #include "ccmail.h"
 #include "ccmutex.h"
 
@@ -41,24 +42,24 @@ class Publisher
     static Publisher & get(Factory & factory);
     static Publisher & get(std::shared_ptr<Mutex> mux, std::shared_ptr<Publisher::Cbk> cbk);
 
-    void publish(IPC_MID_T const mid, IPC_TID_T const receiver, IPC_TID_T const sender);
     std::set<IPC_TID_T> find_subscription(IPC_MID_T const mid);
 
+    void publish(IPC_MID_T const mid, IPC_TID_T const receiver, IPC_TID_T const sender);
     template<typename T>
     void publish(IPC_MID_T const mid, IPC_TID_T const receiver, IPC_TID_T const sender, T const & data_obj)
     {
-        if (this->subscriptions[mid].empty()) return ;
-        Mail::Builder builder;
-        builder.with_sender(sender);
-        builder.with_receiver(receiver);
-        builder << data_obj;
+        std::set<IPC_TID_T> subscription = this->find_subscription(mid);
+        if(subscription.empty()) return;
 
-        for(auto & tid : this->subscriptions[mid])
-        {
-            builder.with_mid(mid);
-            Mail mail = builder.build();
-            cbk->send(mail);
-        }
+        Mail::Builder builder;
+        std::stringstream payload; 
+        payload << data_obj;
+        builder.with_payload(payload);
+        builder.with_mid(mid);
+        builder.with_receiver(receiver);
+        builder.with_sender(sender);
+
+        this->publish(builder, subscription);
     }
 
     template<class Iterator>
@@ -66,7 +67,7 @@ class Publisher
     {
         bool rc = true;
         if (tid >= IPC_MAX_TID) return false;
-        if(this->mux->lock(200)) return false;
+        if(!this->mux->lock(200)) return false;
         for(Iterator it = begin; it != end; ++it)
         {
             if(*it >= IPC_MAX_MID) 
@@ -85,7 +86,7 @@ class Publisher
     {
         bool rc = true;
         if (tid >= IPC_MAX_TID) return false;
-        if(this->mux->lock(200)) return false;
+        if(!this->mux->lock(200)) return false;
         for(Iterator it = begin; it != end; ++it)
         {
             if(*it >= IPC_MAX_MID) continue;
@@ -99,8 +100,7 @@ class Publisher
 
     bool subscribe_once(IPC_MID_T const mid, IPC_TID_T const tid);
     bool unsubscribe_once(IPC_MID_T const mid, IPC_TID_T const tid);
-
-    void publish(Mail::Builder & builder);
+    void publish(Mail::Builder & builderm, std::set<IPC_TID_T> & subscription);
 };
 
 }
