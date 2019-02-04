@@ -2,6 +2,7 @@ define $(_flavor_)_$(_feat_)_MAKE
  
 $(_flavor_)_$(_feat_)_inc=\
 ccbarrier.h \
+ccbundle.h \
 cccond_var.h \
 ccdispatcher.h \
 ccfactory.h \
@@ -9,7 +10,6 @@ ccipc.h \
 ccmail.h \
 ccmailbox.h \
 ccmutex.h \
-ccnode.h \
 ccpublisher.h \
 ccsemaphore.h \
 ccthread.h \
