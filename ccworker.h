@@ -8,19 +8,24 @@
 #ifndef CCWORKER_H_
 #define CCWORKER_H_
 
-#include "ccmail.h"
+
+#include "ccipc.h"
 #include "ccthread.h"
-#include "ccnode.h"
+#include "ccbundle.h"
 
-namespace ipc
+namespace cc
 {
 
-class Worker : public Node<Thread>
+class Worker : public Thread
 {
-public:
-	Worker(TID_T const tid, std::shared_ptr<Barrier> barrier, shared_ptr<Thread::Cbk> cbk);
+    private:
+    std::shared_ptr<Bundle> bundle;
+    IPC * ipc;
+
+    public:
+	Worker(IPC_TID_T const tid, uint32_t const dependencies, Factory & factory, std::shared_ptr<Bundle> bundle, IPC & ipc);
 	virtual ~Worker(void);
-private:
+    private:
 	void runnable(void);
 };
 

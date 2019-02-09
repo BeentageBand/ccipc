@@ -11,36 +11,26 @@
 #include <map>
 #include <set>
 #include <sstream>
-#include "ccmail.h"
-#include "ccmutex.h"
+#include "ccipc.h"
+#include "ccrw_lock.h"
 
 namespace cc
 {
 class Factory;
 class Publisher
 {
-    public:
-    class Cbk
-    {
-        public:
-        Cbk(void){}
-        virtual ~Cbk(void){}
-        virtual bool send(Mail & mail) = 0;
-    };
-
     private:
     std::map<IPC_MID_T, std::set<IPC_TID_T>> subscriptions;
-    std::shared_ptr<Mutex> mux; 
-    std::shared_ptr<Publisher::Cbk> cbk;
+    std::shared_ptr<RW_Lock> rw_lock; 
+    IPC * ipc;
 
     private:
-    Publisher(Factory & factory);
-    Publisher(std::shared_ptr<Mutex> mux, std::shared_ptr<Publisher::Cbk> cbk);
+    Publisher(Factory & factory, IPC & ipc);
     virtual ~Publisher(void);
+
     public:
     static Publisher & get(void);
-    static Publisher & get(Factory & factory);
-    static Publisher & get(std::shared_ptr<Mutex> mux, std::shared_ptr<Publisher::Cbk> cbk);
+    static Publisher & get(Factory & factory, IPC & ipc);
 
     std::set<IPC_TID_T> find_subscription(IPC_MID_T const mid);
 
@@ -49,6 +39,7 @@ class Publisher
     void publish(IPC_MID_T const mid, IPC_TID_T const receiver, IPC_TID_T const sender, T const & data_obj)
     {
         std::set<IPC_TID_T> subscription = this->find_subscription(mid);
+
         if(subscription.empty()) return;
 
         Mail::Builder builder;
@@ -67,7 +58,7 @@ class Publisher
     {
         bool rc = true;
         if (tid >= IPC_MAX_TID) return false;
-        if(!this->mux->lock(200)) return false;
+        if(!this->rw_lock->wlock(200)) return false;
         for(Iterator it = begin; it != end; ++it)
         {
             if(*it >= IPC_MAX_MID) 
@@ -77,7 +68,7 @@ class Publisher
             }
             rc = this->unsubscribe_once(*it, tid);
         }
-        this->mux->unlock();
+        this->rw_lock->unlock();
         return rc;
     }
 
@@ -86,13 +77,13 @@ class Publisher
     {
         bool rc = true;
         if (tid >= IPC_MAX_TID) return false;
-        if(!this->mux->lock(200)) return false;
+        if(!this->rw_lock->wlock(200)) return false;
         for(Iterator it = begin; it != end; ++it)
         {
             if(*it >= IPC_MAX_MID) continue;
             this->subscribe_once(*it, tid);
         }
-        this->mux->unlock();
+        this->rw_lock->unlock();
         return rc;
     }
 

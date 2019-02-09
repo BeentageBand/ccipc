@@ -1,11 +1,12 @@
 #ifndef CCFACTORY_H_
 #define CCFACTORY_H_
 
+#include "ccipc.h"
 #include "ccbarrier.h"
 #include "cccond_var.h"
 #include "ccmutex.h"
+#include "ccrw_lock.h"
 #include "ccsemaphore.h"
-#include "ccpublisher.h"
 #include "ccthread.h"
 
 namespace cc
@@ -17,12 +18,14 @@ class Factory
     Factory(void) {};
     virtual ~Factory(void){};
 
-    virtual std::shared_ptr<Mutex> create_mutex(void) = 0;
-    virtual std::shared_ptr<Semaphore> create_semaphore(uint32_t const resources) = 0;
-    virtual std::shared_ptr<Cond_Var> create_cond_var(void) = 0;
-    virtual std::shared_ptr<Thread::Cbk> create_thread_cbk(void) = 0;
-    virtual std::shared_ptr<Barrier> create_barrier(uint32_t const resources) = 0;
-    virtual std::shared_ptr<Publisher::Cbk> create_publisher_cbk(void) = 0;
+    virtual std::shared_ptr<Mutex> create_mutex(void) {return std::shared_ptr<Mutex>(nullptr);}
+    virtual std::shared_ptr<Semaphore> create_semaphore(uint32_t const resources) {return std::shared_ptr<Semaphore>(nullptr);}
+    virtual std::shared_ptr<Cond_Var> create_cond_var(void) {return std::shared_ptr<Cond_Var>(nullptr);}
+    virtual std::shared_ptr<Thread::Cbk> create_thread_cbk(void) {return std::shared_ptr<Thread::Cbk>(nullptr);}
+    virtual std::shared_ptr<Barrier> create_barrier(uint32_t const resources) {return std::shared_ptr<Barrier>(nullptr);}
+    virtual std::shared_ptr<RW_Lock> create_rw_lock(void) {return std::shared_ptr<RW_Lock>(nullptr);}
+    virtual std::shared_ptr<IPC::Retriever> create_ipc_retriever(IPC_TID_T const tid, cc::IPC & ipc) {return std::shared_ptr<IPC::Retriever>(nullptr);}
+    virtual std::shared_ptr<IPC::Sender> create_ipc_sender(IPC_TID_T const tid, cc::IPC & ipc) {return std::shared_ptr<IPC::Sender>(nullptr);}
 };
 
 }

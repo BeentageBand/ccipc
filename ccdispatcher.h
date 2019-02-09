@@ -14,7 +14,6 @@
 
 namespace cc
 {
-template <
 class Dispatcher : public Bundle
 {
     private:
@@ -30,6 +29,7 @@ class Dispatcher : public Bundle
             bundle.on_start();
         }
     }
+
     void on_mail(Mail const & mail);
     {
         for(auto & bundle : this->bundles)
@@ -37,6 +37,7 @@ class Dispatcher : public Bundle
             bundle.on_mail(mail);
         }
     }
+
     void on_stop(void);
     {
         for(auto & bundle : this->bundles)
@@ -45,6 +46,7 @@ class Dispatcher : public Bundle
         }
     }
 };
+
 }
 
 #endif /* CCDISPATCHER_H_ */

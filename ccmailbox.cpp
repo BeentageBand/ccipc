@@ -6,6 +6,7 @@
  */
 #include <algorithm>
 #include "ccmailbox.h"
+#include "ccfactory.h"
 
 using namespace std;
 using namespace cc;
@@ -15,17 +16,8 @@ inline bool Is_This_Mail(Mail & a, Mail & b)
    return a.mid == b.mid;
 }
 
-Mailbox::Mailbox(IPC_TID_T const tid, shared_ptr<Mutex> mux, shared_ptr<Cond_Var> cv)
-:tid(tid),
-queue(),
-mux(mux),
-cv(cv)
-{
-    this->cv->with_mutex(this->mux);
-}
-
 Mailbox::Mailbox(IPC_TID_T const tid, Factory & factory)
-:Mailbox(tid, factory.create_mutex(), factory.create_cond_var())
+:tid(tid), mux(factory.create_mutex()), cv(factory.create_cond_var())
 {}
 
 Mailbox::~Mailbox(void){}

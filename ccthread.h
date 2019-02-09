@@ -38,7 +38,6 @@ private:
     std::shared_ptr<Barrier> barrier;
 
 public:
-	Thread(IPC_TID_T const tid, std::shared_ptr<Barrier> barrier, std::shared_ptr<Thread::Cbk> cbk);
 	Thread(IPC_TID_T const tid, uint32_t const num_dependencies, Factory & factory);
 	virtual ~Thread(void);
 

@@ -4,28 +4,20 @@
 using namespace cc;
 using namespace std;
 
-Publisher & Publisher::get(Factory & factory)
+Publisher & Publisher::get(Factory & factory, IPC & ipc)
 {
-    return Publisher::get(factory.create_mutex(), factory.create_publisher_cbk());
-}
-
-Publisher & Publisher::get(shared_ptr<Mutex> mux, shared_ptr<Publisher::Cbk> cbk)
-{
-    static Publisher publisher(mux, cbk);
+    static Publisher publisher(factory, ipc);
     return publisher;
 }
 
 Publisher & Publisher::get(void)
 {
-    return Publisher::get(nullptr, nullptr);
+    Factory factory;
+    return Publisher::get(factory, IPC::get());
 }
 
-Publisher::Publisher(std::shared_ptr<Mutex> mux, std::shared_ptr<Publisher::Cbk> cbk)
-: subscriptions(), mux(mux), cbk(cbk)
-{}
-
-Publisher::Publisher(Factory & factory)
-: Publisher(factory.create_mutex(), factory.create_publisher_cbk())
+Publisher::Publisher(Factory & factory, IPC & ipc)
+: subscriptions(), rw_lock(factory.create_rw_lock()), ipc(&ipc)
 {}
 
 Publisher::~Publisher(void){}
@@ -33,12 +25,11 @@ Publisher::~Publisher(void){}
 
 std::set<IPC_TID_T> Publisher::find_subscription(IPC_MID_T const mid)
 {
-    if(this->mux->lock(200)) return set<IPC_TID_T>();
+    if(this->rw_lock->rlock(200)) return set<IPC_TID_T>();
     auto single_subscription = this->subscriptions[mid];
-    this->mux->unlock();
+    this->rw_lock->unlock();
     return single_subscription;
 }
-
 
 void Publisher::publish(IPC_MID_T const mid, IPC_TID_T const receiver, IPC_TID_T const sender)
 {
@@ -59,7 +50,9 @@ void Publisher::publish(Mail::Builder & builder, set<IPC_TID_T> & subscription)
 	{
         builder.with_receiver(tid);
         Mail mail = builder.build();
-        cbk->send(mail);
+        shared_ptr<IPC::Sender> sender = ipc->get_sender(tid);
+        if(sender)
+            sender->send(mail);
 	}
 }
 

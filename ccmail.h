@@ -37,6 +37,12 @@ public:
             return *this;
         }
 
+        Builder & with_payload(std::stringstream & payload)
+        {
+            this->payload << payload.str();
+            return *this;
+        }
+
         Builder & with_mid(IPC_MID_T const mid);
         Builder & with_receiver(IPC_TID_T const tid);
         Builder & with_sender(IPC_TID_T const tid);

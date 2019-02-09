@@ -11,6 +11,7 @@ ccmail.h \
 ccmailbox.h \
 ccmutex.h \
 ccpublisher.h \
+ccrw_lock.h \
 ccsemaphore.h \
 ccthread.h \
 ccworker.h \
@@ -21,9 +22,8 @@ ccthread \
 ccmail \
 ccmailbox \
 ccpublisher \
-#ccdispatcher \
-ccipc \
 ccworker \
+ccipc \
 
 $(_flavor_)_$(_feat_)_lib=ccipc
 

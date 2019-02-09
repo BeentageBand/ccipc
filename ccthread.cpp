@@ -16,19 +16,14 @@ Thread::Cbk::Cbk(void)
 Thread::Cbk::~Cbk(void)
 {}
 
-Thread::Thread(IPC_TID_T const tid, shared_ptr<Barrier> barrier,
-                shared_ptr<Thread::Cbk> cbk)
-: tid(tid), barrier(barrier), cbk(cbk)
+Thread::Thread(IPC_TID_T const tid, uint32_t const num_dependencies, Factory & factory)
+: tid(tid),barrier(factory.create_barrier(num_dependencies)), cbk(factory.create_thread_cbk())
 {
     if(this->cbk)
     {
         this->cbk->register_thread(*this);
     }
 }
-
-Thread::Thread(IPC_TID_T const tid, uint32_t const num_dependencies, Factory & factory)
-: Thread(tid, factory.create_barrier(num_dependencies), factory.create_thread_cbk())
-{}
 
 Thread::~Thread(void)
 {
