@@ -24,6 +24,7 @@ void Worker::runnable(void)
 {
     IPC::Mailbox_Pool & pool = this->ipc->get_mailbox_pool();
     pool.subscribe_mailbox(this->tid);
+
 	this->bundle->on_start();
 
 	this->ready();

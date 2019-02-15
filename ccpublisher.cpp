@@ -25,7 +25,8 @@ Publisher::~Publisher(void){}
 
 std::set<IPC_TID_T> Publisher::find_subscription(IPC_MID_T const mid)
 {
-    if(this->rw_lock->rlock(200)) return set<IPC_TID_T>();
+    static set<IPC_TID_T> empty_set;
+    if(!this->rw_lock->rlock(200)) return empty_set;
     auto single_subscription = this->subscriptions[mid];
     this->rw_lock->unlock();
     return single_subscription;

@@ -6,8 +6,8 @@ namespace cc
 class Bundle
 {
     public:
-    Bundle(void);
-    virtual ~Bundle(void);
+    Bundle(void){}
+    virtual ~Bundle(void){}
 
     virtual void on_start(void) = 0;
     virtual void on_mail(Mail const & mail) = 0;

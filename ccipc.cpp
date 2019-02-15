@@ -34,16 +34,6 @@ bool IPC::Mailbox_Pool::unsubscribe_mailbox(IPC_TID_T const tid)
     return true;
 }
 
-Mailbox & IPC::Mailbox_Pool::get_mailbox(IPC_TID_T const tid)
-{
-    static Mailbox empty_mbx(IPC_MAX_TID, *this->factory);
-    if(this->lock->rlock(200)) return empty_mbx;
-    std::map<IPC_TID_T, Mailbox>::iterator found = this->pool.find(tid);
-    if(found == this->pool.end())
-    this->lock->unlock();
-    return found->second;
-}
-
 IPC::Sender::~Sender(void){}
 
 IPC::Sender::Sender(IPC_TID_T const tid)

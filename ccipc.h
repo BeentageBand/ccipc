@@ -68,7 +68,7 @@ public:
     
     std::shared_ptr<IPC::Retriever> get_retriever(IPC_TID_T const tid);
     std::shared_ptr<IPC::Sender> get_sender(IPC_TID_T const tid);
-    IPC::Mailbox_Pool & get_mailbox_pool(void);
+    inline IPC::Mailbox_Pool & get_mailbox_pool(void) { return this->mailbox_pool; }
 
 private:
    IPC(Factory & factory);
