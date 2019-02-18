@@ -44,7 +44,7 @@ public:
    {
        public:
        virtual ~Retriever(void){}
-       virtual std::shared_ptr<Mail> retrieve(IPC_Clock_T const tout_ms);
+       virtual std::shared_ptr<Mail> retrieve(IPC_Clock_T const tout_ms) = 0;
    };
 
    class Sender

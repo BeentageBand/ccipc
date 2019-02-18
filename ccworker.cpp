@@ -1,9 +1,3 @@
-/*
- * ccworker.cpp
- *
- *  Created on: Aug 31, 2017
- *      Author: puch
- */
 #define Dbg_FID DBG_FID_DEF(IPC_FID,0)
 #include <memory>
 #include "ccipc.h"

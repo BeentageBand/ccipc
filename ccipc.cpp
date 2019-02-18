@@ -1,19 +1,20 @@
-/*
- * ccipc.cpp
- *
- *  Created on: Aug 31, 2017
- *      Author: puch
- */
+#undef Dbg_FID
+#define Dbg_FID DBG_FID_DEF(IPC_FID,1)
 #include "ccfactory.h"
 #include "ccipc.h"
 #include "ccmailbox.h"
+#include "dbg_log.h"
 
 using namespace cc;
 using namespace std;
 
 IPC::Mailbox_Pool::Mailbox_Pool(Factory & factory)
 : factory(&factory), pool(), lock(factory.create_rw_lock())
-{}
+{
+    Dbg_Info("IPC::Mailbox_Pool::%s with factory %s lock %s", __func__,
+            (nullptr == this->factory)? "is null":"isn't null",
+            (lock)? "isn't null":"is null");
+}
 
 IPC::Mailbox_Pool::~Mailbox_Pool(void){}
 bool IPC::Mailbox_Pool::subscribe_mailbox(IPC_TID_T const tid)
@@ -55,18 +56,23 @@ void IPC::Sender::send(IPC_MID_T const mid, IPC_TID_T const receiver, std::strin
 IPC & IPC::get(Factory & factory)
 {
     static IPC ipc(factory);
+    Dbg_Info("IPC::%s singleton get, factory provided", __func__);
     return ipc;
 }
 
 IPC & IPC::get(void)
 {
     Factory factory;
+    Dbg_Info("IPC::%s singleton get", __func__);
     return IPC::get(factory);
 }
 
 IPC::IPC(Factory & factory)
 : factory(&factory), mailbox_pool(factory)
-{} 
+{
+    Dbg_Info("IPC::%s with factory = %s and mailboxpool", __func__, 
+            (nullptr == this->factory)? "is null":"isn't null");
+} 
 
 IPC::~IPC(void){}
 

@@ -46,7 +46,6 @@ class Dispatcher : public Bundle
         }
     }
 };
-
 }
 
 #endif /* CCDISPATCHER_H_ */

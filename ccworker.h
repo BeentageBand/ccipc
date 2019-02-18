@@ -25,7 +25,6 @@ class Worker : public Thread
     public:
 	Worker(IPC_TID_T const tid, uint32_t const dependencies, Factory & factory, std::shared_ptr<Bundle> bundle, IPC & ipc);
 	virtual ~Worker(void);
-    private:
 	void runnable(void);
 };
 
