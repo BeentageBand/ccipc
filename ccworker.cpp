@@ -4,11 +4,12 @@
  *  Created on: Aug 31, 2017
  *      Author: puch
  */
-
+#define Dbg_FID DBG_FID_DEF(IPC_FID,0)
 #include <memory>
 #include "ccipc.h"
 #include "ccmailbox.h"
 #include "ccworker.h"
+#include "dbg_log.h"
 
 using namespace cc;
 using namespace std;
@@ -22,9 +23,11 @@ Worker::~Worker(void)
 
 void Worker::runnable(void)
 {
+	Dbg_Info("%s started tid = %d", __func__, this->tid);
     IPC::Mailbox_Pool & pool = this->ipc->get_mailbox_pool();
     pool.subscribe_mailbox(this->tid);
 
+	Dbg_Info("%s:subscribed to pool ", __func__);
 	this->bundle->on_start();
 
 	this->ready();
