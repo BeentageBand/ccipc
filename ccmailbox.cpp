@@ -18,7 +18,9 @@ inline bool Is_This_Mail(Mail & a, Mail & b)
 
 Mailbox::Mailbox(IPC_TID_T const tid, Factory & factory)
 :tid(tid), mux(factory.create_mutex()), cv(factory.create_cond_var())
-{}
+{
+    this->cv->with_mutex(this->mux);
+}
 
 Mailbox::~Mailbox(void){}
 
@@ -77,4 +79,3 @@ shared_ptr<Mail> Mailbox::tail(IPC_MID_T const mid, IPC_Clock_T const wait_ms)
    return sh_mail;
 
 }
-

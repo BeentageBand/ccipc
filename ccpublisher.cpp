@@ -57,11 +57,10 @@ void Publisher::publish(Mail::Builder & builder, set<IPC_TID_T> & subscription)
 	}
 }
 
-
 bool Publisher::subscribe_once(IPC_MID_T const mid, IPC_TID_T const tid)
 {
     set<IPC_TID_T> & single_subscription = this->subscriptions[mid];
-    single_subscription.insert(tid);
+    single_subscription.emplace_hint(tid);
     return single_subscription.find(tid) != single_subscription.end();
 }
 
