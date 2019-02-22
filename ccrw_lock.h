@@ -1,6 +1,8 @@
 #ifndef CCRW_LOCK_H_
 #define CCRW_LOCK_H_
 
+#include "ipc_types.h"
+
 namespace cc
 {
 class RW_Lock
