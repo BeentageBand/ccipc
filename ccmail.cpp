@@ -3,9 +3,9 @@ using namespace cc;
 using namespace std;
 
 Mail::Builder::Builder(void)
-    : mid(IPC_MAX_MID),
-    receiver(IPC_MAX_TID),
-    sender(IPC_MAX_TID),
+    : mid(-1),
+    receiver(-1),
+    sender(-1),
     payload()
 {}
 
@@ -38,9 +38,9 @@ Mail Mail::Builder::build(void)
 }
 
 Mail::Mail(void)
-: mid(IPC_MAX_MID), 
-sender(IPC_MAX_TID),
-receiver(IPC_MAX_TID),
+: mid(-1), 
+sender(-1),
+receiver(-1),
 payload()
 {}
 

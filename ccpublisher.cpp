@@ -1,11 +1,23 @@
-#undef Dbg_FID
-#define Dbg_FID DBG_FID_DEF(IPC_FID,0)
 #include "ccfactory.h"
 #include "ccpublisher.h"
-#include "dbg_log.h"
+#include "logger/logger.h"
+
+#define Dbg_Info(...) Logger_info(get_log(), __VA_ARGS__)
 
 using namespace cc;
 using namespace std;
+
+static union Logger * get_log(void);
+
+union Logger * get_log(void)
+{
+    static union Logger log = {NULL};
+    if (NULL == log.vtbl)
+    {
+        Logger_populate(&log, NULL, NULL);
+    }
+    return &log;
+}
 
 Publisher & Publisher::get(Factory & factory, IPC & ipc)
 {
@@ -22,7 +34,10 @@ Publisher & Publisher::get(void)
 }
 
 Publisher::Publisher(Factory & factory, IPC & ipc)
-: subscriptions(), rw_lock(factory.create_rw_lock()), ipc(&ipc)
+: subscriptions(),
+  rw_lock(factory.create_rw_lock()), 
+  validator(factory.create_validator()),
+  ipc(&ipc)
 {
     Dbg_Info("%s,Singleton, instance ipc = %s, rw_lock = %s", __func__,
             (this->rw_lock)? "is not null":"is null",

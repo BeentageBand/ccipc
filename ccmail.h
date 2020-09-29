@@ -74,7 +74,7 @@ public:
 
 	inline std::stringstream & get_payload(void) {return this->payload;}
 
-	inline size_t get_payload_size(void) { return this->payload.width();}
+	inline size_t get_payload_size(void) const { return this->payload.width();}
 
 	inline void set_receiver(IPC_TID_T const tid) { this->receiver = tid;}
 

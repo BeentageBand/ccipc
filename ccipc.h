@@ -15,6 +15,7 @@
 #include "ipc_types.h"
 #include "ccmailbox.h"
 #include "ccrw_lock.h"
+#include "ccvalidator.h"
 
 namespace cc
 {
@@ -61,6 +62,7 @@ public:
 private:
    Factory * factory;
    IPC::Mailbox_Pool mailbox_pool;
+   std::shared_ptr<Validator> validator;
 
 public:
     static IPC & get(Factory & factory);

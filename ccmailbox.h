@@ -29,7 +29,7 @@ class Mailbox
     Mailbox(IPC_TID_T const tid, Factory & factory);
 	virtual ~Mailbox(void);
 
-	void push(Mail & mail);
+	void push(Mail const & mail);
 	std::shared_ptr<Mail> tail(IPC_Clock_T const wait_ms);
 	std::shared_ptr<Mail> tail(IPC_MID_T const mid, IPC_Clock_T const wait_ms);
 

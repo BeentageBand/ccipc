@@ -3,10 +3,24 @@
 #include "ccfactory.h"
 #include "ccipc.h"
 #include "ccmailbox.h"
-#include "dbg_log.h"
+#include "logger/logger.h"
+
+#define Dbg_Info(...) Logger_info(get_log(), __VA_ARGS__)
 
 using namespace cc;
 using namespace std;
+
+static union Logger * get_log(void);
+
+union Logger * get_log(void)
+{
+    static union Logger log = {NULL};
+    if (NULL == log.vtbl)
+    {
+        Logger_populate(&log, NULL, NULL);
+    }
+    return &log;
+}
 
 IPC::Mailbox_Pool::Mailbox_Pool(Factory & factory)
 : factory(&factory), pool(), lock(factory.create_rw_lock())
@@ -68,7 +82,7 @@ IPC & IPC::get(void)
 }
 
 IPC::IPC(Factory & factory)
-: factory(&factory), mailbox_pool(factory)
+: factory(&factory), mailbox_pool(factory), validator(factory.create_validator())
 {
     Dbg_Info("IPC::%s with factory = %s and mailboxpool", __func__, 
             (nullptr == this->factory)? "is null":"isn't null");
@@ -79,7 +93,7 @@ IPC::~IPC(void){}
 shared_ptr<IPC::Retriever> IPC::get_retriever(IPC_TID_T const tid)
 {
     shared_ptr<IPC::Retriever> retriever;
-    if(tid < IPC_MAX_TID)
+    if(!this->validator->validate_tid(tid))
         retriever = this->factory->create_ipc_retriever(tid, *this);
     return retriever;
 }
@@ -87,7 +101,7 @@ shared_ptr<IPC::Retriever> IPC::get_retriever(IPC_TID_T const tid)
 shared_ptr<IPC::Sender> IPC::get_sender(IPC_TID_T const tid)
 {
     shared_ptr<IPC::Sender> sender;
-    if(tid < IPC_MAX_TID)
+    if(!this->validator->validate_tid(tid))
         sender = this->factory->create_ipc_sender(tid, *this);
     return sender;
 }

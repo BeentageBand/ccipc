@@ -13,6 +13,7 @@
 #include <sstream>
 #include "ccipc.h"
 #include "ccrw_lock.h"
+#include "ccvalidator.h"
 
 namespace cc
 {
@@ -22,6 +23,7 @@ class Publisher
     private:
     std::map<IPC_MID_T, std::set<IPC_TID_T>> subscriptions;
     std::shared_ptr<RW_Lock> rw_lock; 
+    std::shared_ptr<Validator> validator;
     IPC * ipc;
 
     private:
@@ -57,11 +59,11 @@ class Publisher
     bool unsubscribe(Iterator begin, Iterator end, IPC_TID_T const tid)
     {
         bool rc = true;
-        if (tid >= IPC_MAX_TID) return false;
+        if (this->validator->validate_tid(tid))return false;
         if(!this->rw_lock->wlock(200)) return false;
         for(Iterator it = begin; it != end; ++it)
         {
-            if(*it >= IPC_MAX_MID) 
+            if(this->validator->validate_tid(*it))
             {
                 rc = false;
                 continue;
@@ -76,11 +78,11 @@ class Publisher
     bool subscribe(Iterator begin, Iterator end, IPC_TID_T const tid)
     {
         bool rc = true;
-        if (tid >= IPC_MAX_TID) return false;
+        if (this->validator->validate_tid(tid))return false;
         if(!this->rw_lock->wlock(200)) return false;
         for(Iterator it = begin; it != end; ++it)
         {
-            if(*it >= IPC_MAX_MID) continue;
+            if(this->validator->validate_tid(*it)) continue;
             this->subscribe_once(*it, tid);
         }
         this->rw_lock->unlock();

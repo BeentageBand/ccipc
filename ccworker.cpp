@@ -3,13 +3,33 @@
 #include "ccipc.h"
 #include "ccmailbox.h"
 #include "ccworker.h"
-#include "dbg_log.h"
+#include "logger/logger.h"
+
+#define Dbg_Info(...) Logger_info(get_log(), __VA_ARGS__)
 
 using namespace cc;
 using namespace std;
 
-Worker::Worker(IPC_TID_T const tid, uint32_t const dependencies, Factory & factory, std::shared_ptr<Bundle> bundle, IPC & ipc)
-: Thread(tid, dependencies, factory), bundle(bundle), ipc(&ipc)
+static union Logger * get_log(void);
+
+union Logger * get_log(void)
+{
+    static union Logger log = {NULL};
+    if (NULL == log.vtbl)
+    {
+        Logger_populate(&log, NULL, NULL);
+    }
+    return &log;
+}
+
+Worker::Worker(IPC_TID_T const tid, IPC_MID_T const shutdown_mid, uint32_t const dependencies, 
+		Factory & factory, 
+		std::shared_ptr<Bundle> bundle,
+		IPC & ipc)
+: Thread(tid, dependencies, factory), 
+  shutdown_mid(shutdown_mid), 
+  bundle(bundle), 
+  ipc(&ipc)
 {}
 
 Worker::~Worker(void)
@@ -33,7 +53,7 @@ void Worker::runnable(void)
 		if(mail)
 		{
 			this->bundle->on_mail(*mail);
-			if(WORKER_INT_SHUTDOWN_MID == mail->mid)
+			if(this->shutdown_mid == mail->mid)
 			{
 				break;
 			}

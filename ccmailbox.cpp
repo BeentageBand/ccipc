@@ -24,7 +24,7 @@ Mailbox::Mailbox(IPC_TID_T const tid, Factory & factory)
 
 Mailbox::~Mailbox(void){}
 
-void Mailbox::push(Mail & mail)
+void Mailbox::push(Mail const & mail) 
 {
    if(this->mux->lock(200))
    {

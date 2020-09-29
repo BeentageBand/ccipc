@@ -19,11 +19,15 @@ namespace cc
 class Worker : public Thread
 {
     private:
+    IPC_MID_T const shutdown_mid;
     std::shared_ptr<Bundle> bundle;
     IPC * ipc;
 
     public:
-	Worker(IPC_TID_T const tid, uint32_t const dependencies, Factory & factory, std::shared_ptr<Bundle> bundle, IPC & ipc);
+	Worker(IPC_TID_T const tid, IPC_MID_T const shutdown_mid, uint32_t const dependencies, 
+        Factory & factory, 
+        std::shared_ptr<Bundle> bundle, 
+        IPC & ipc);
 	virtual ~Worker(void);
 	void runnable(void);
 };
