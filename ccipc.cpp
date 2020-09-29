@@ -31,6 +31,7 @@ IPC::Mailbox_Pool::Mailbox_Pool(Factory & factory)
 }
 
 IPC::Mailbox_Pool::~Mailbox_Pool(void){}
+
 bool IPC::Mailbox_Pool::subscribe_mailbox(IPC_TID_T const tid)
 {
     if(!this->lock->wlock(200)) return false;
@@ -47,6 +48,15 @@ bool IPC::Mailbox_Pool::unsubscribe_mailbox(IPC_TID_T const tid)
     this->pool.erase(tid);
     this->lock->unlock();
     return true;
+}
+
+Mailbox & IPC::Mailbox_Pool::get_mailbox(IPC_TID_T const tid) {
+    auto mbx_pair = this->pool.find(tid);
+    if (this->pool.end() != mbx_pair) {
+        return mbx_pair->second;
+    }
+    this->subscribe_mailbox(tid);
+    return this->pool.find(tid)->second;
 }
 
 IPC::Sender::~Sender(void){}

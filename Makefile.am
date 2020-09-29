@@ -52,19 +52,16 @@ pkgconfig_DATA = ccipc.pc
 # Unit Tests
 check_PROGRAMS = unittest
 unittest_SOURCES = \
-tst/ipc_gtest_worker.cpp                    \
-tst/ipc_gtest_worker/ipc_gtest_worker_evs.h \
 tst/ipc_gtests/ipc_factory_mock.h           \
 tst/ipc_gtests/ipc_gtest.cpp                \
 tst/ipc_gtests/ipc_mailbox_gtest.cpp        \
 tst/ipc_gtests/ipc_mail_gtest.cpp           \
-tst/ipc_gtests/ipc_mutex_gtest.cpp          \
 tst/ipc_gtests/ipc_publisher_gtest.cpp      \
 tst/ipc_gtests/ipc_thread_gtest.cpp         \
 tst/ipc_gtests/ipc_worker_gtest.cpp
 
-unittest_CPPFLAGS = $(GMOCK_CFLAGS) $(IPC_CXXFLAGS)
-unittest_LDADD = $(lib_LTLIBRARIES) $(GMOCK_LIBS) $(IPC_LIBS)
+unittest_CPPFLAGS = $(GMOCK_CFLAGS) $(CCIPC_CXXFLAGS)
+unittest_LDADD = $(lib_LTLIBRARIES) $(GMOCK_LIBS) $(CCIPC_LIBS)
 unittest_LDFLAGS = -no-install
 
 EXTRA_DIST = m4/NOTES
