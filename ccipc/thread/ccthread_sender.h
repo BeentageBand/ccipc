@@ -1,7 +1,7 @@
 #ifndef CCTHREAD_SENDER_H_
 #define CCTHREAD_SENDER_H_
-#include "ipc/ccipc.h"
-#include "ipc/factory/ccfactory.h"
+#include "ccipc/ccipc.h"
+#include "ccipc/factory/ccfactory.h"
 
 namespace cc
 {

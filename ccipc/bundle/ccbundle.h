@@ -1,7 +1,7 @@
 #ifndef CCBUNDLE_H_
 #define CCBUNDLE_H_
 
-#include "ipc/mail/ccmail.h"
+#include "ccipc/mail/ccmail.h"
 
 namespace cc
 {

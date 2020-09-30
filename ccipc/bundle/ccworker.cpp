@@ -1,7 +1,7 @@
 #include <memory>
-#include "ipc/ccipc.h"
-#include "ipc/bundle/ccworker.h"
-#include "ipc/mailbox/ccmailbox.h"
+#include "ccipc/ccipc.h"
+#include "ccipc/bundle/ccworker.h"
+#include "ccipc/mailbox/ccmailbox.h"
 #include "logger/logger.h"
 
 #define Dbg_Info(...) Logger_info(get_log(), __VA_ARGS__)

@@ -11,7 +11,7 @@
 #include <memory>
 #include <vector>
 
-#include "ipc/sync/ccbarrier.h"
+#include "ccipc/sync/ccbarrier.h"
 
 namespace cc
 {

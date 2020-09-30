@@ -1,7 +1,7 @@
 #ifndef CCSEMAPHORE_H_
 #define CCSEMAPHORE_H_
 
-#include "ipc/common/ipc_types.h"
+#include "ccipc/common/ipc_types.h"
 
 namespace cc
 {

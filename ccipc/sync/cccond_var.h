@@ -2,7 +2,7 @@
 #define CCCOND_VAR_H_
 
 #include <memory>
-#include "ipc/common/ipc_types.h"
+#include "ccipc/common/ipc_types.h"
 
 namespace cc 
 {

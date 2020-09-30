@@ -11,8 +11,8 @@
 #include <memory>
 #include <deque>
 
-#include "ipc/sync/cccond_var.h"
-#include "ipc/mail/ccmail.h"
+#include "ccipc/sync/cccond_var.h"
+#include "ccipc/mail/ccmail.h"
 
 namespace cc 
 {

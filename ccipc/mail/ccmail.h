@@ -10,7 +10,7 @@
 
 #include <cstdlib>
 #include <sstream>
-#include "ipc/common/ipc_types.h"
+#include "ccipc/common/ipc_types.h"
 
 namespace cc
 {

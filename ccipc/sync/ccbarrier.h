@@ -1,6 +1,6 @@
 #ifndef CCBARRIER_H_
 #define CCBARRIER_H_
-#include "ipc/common/ipc_types.h"
+#include "ccipc/common/ipc_types.h"
 
 namespace cc
 {

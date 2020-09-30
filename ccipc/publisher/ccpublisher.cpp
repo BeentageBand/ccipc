@@ -1,5 +1,5 @@
-#include "ipc/factory/ccfactory.h"
-#include "ipc/publisher/ccpublisher.h"
+#include "ccipc/factory/ccfactory.h"
+#include "ccipc/publisher/ccpublisher.h"
 #include "logger/logger.h"
 
 #define Dbg_Info(...) Logger_info(get_log(), __VA_ARGS__)

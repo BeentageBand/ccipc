@@ -2,50 +2,50 @@
 # Libraries
 lib_LTLIBRARIES = libccipc-1.0.0.la
 libccipc_1_0_0_la_SOURCES = \
-ipc/ccipc.cpp                   \
-ipc/ccipc.h                     \
-ipc/bundle/ccbundle.h           \
-ipc/bundle/ccdispatcher.h       \
-ipc/bundle/ccworker.cpp         \
-ipc/bundle/ccworker.h           \
-ipc/bundle/ccworker_mailist.h   \
-ipc/common/ipc_types.h          \
-ipc/factory/ccfactory.h         \
-ipc/mailbox/ccmailbox.cpp       \
-ipc/mailbox/ccmailbox.h         \
-ipc/mail/ccmail.cpp             \
-ipc/mail/ccmail.h               \
-ipc/publisher/ccpublisher.cpp   \
-ipc/publisher/ccpublisher.h     \
-ipc/sync/ccbarrier.h            \
-ipc/sync/cccond_var.h           \
-ipc/sync/ccmutex.h              \
-ipc/sync/ccrw_lock.h            \
-ipc/sync/ccsemaphore.h          \
-ipc/thread/ccthread.cpp         \
-ipc/thread/ccthread_sender.cpp  \
-ipc/thread/ccthread.h           \
-ipc/thread/ccthread_sender.h    
+ccipc/ccipc.cpp                   \
+ccipc/ccipc.h                     \
+ccipc/bundle/ccbundle.h           \
+ccipc/bundle/ccdispatcher.h       \
+ccipc/bundle/ccworker.cpp         \
+ccipc/bundle/ccworker.h           \
+ccipc/bundle/ccworker_mailist.h   \
+ccipc/common/ipc_types.h          \
+ccipc/factory/ccfactory.h         \
+ccipc/mailbox/ccmailbox.cpp       \
+ccipc/mailbox/ccmailbox.h         \
+ccipc/mail/ccmail.cpp             \
+ccipc/mail/ccmail.h               \
+ccipc/publisher/ccpublisher.cpp   \
+ccipc/publisher/ccpublisher.h     \
+ccipc/sync/ccbarrier.h            \
+ccipc/sync/cccond_var.h           \
+ccipc/sync/ccmutex.h              \
+ccipc/sync/ccrw_lock.h            \
+ccipc/sync/ccsemaphore.h          \
+ccipc/thread/ccthread.cpp         \
+ccipc/thread/ccthread_sender.cpp  \
+ccipc/thread/ccthread.h           \
+ccipc/thread/ccthread_sender.h    
 
 libccipc_1_0_0_la_LDFLAGS = -version-info 0:0:0
 nobase_include_HEADERS = \
-ipc/ccipc.h                     \
-ipc/bundle/ccbundle.h           \
-ipc/bundle/ccdispatcher.h       \
-ipc/bundle/ccworker.h           \
-ipc/bundle/ccworker_mailist.h   \
-ipc/common/ipc_types.h          \
-ipc/factory/ccfactory.h         \
-ipc/mailbox/ccmailbox.h         \
-ipc/mail/ccmail.h               \
-ipc/publisher/ccpublisher.h     \
-ipc/sync/ccbarrier.h            \
-ipc/sync/cccond_var.h           \
-ipc/sync/ccmutex.h              \
-ipc/sync/ccrw_lock.h            \
-ipc/sync/ccsemaphore.h          \
-ipc/thread/ccthread.h           \
-ipc/thread/ccthread_sender.h    
+ccipc/ccipc.h                     \
+ccipc/bundle/ccbundle.h           \
+ccipc/bundle/ccdispatcher.h       \
+ccipc/bundle/ccworker.h           \
+ccipc/bundle/ccworker_mailist.h   \
+ccipc/common/ipc_types.h          \
+ccipc/factory/ccfactory.h         \
+ccipc/mailbox/ccmailbox.h         \
+ccipc/mail/ccmail.h               \
+ccipc/publisher/ccpublisher.h     \
+ccipc/sync/ccbarrier.h            \
+ccipc/sync/cccond_var.h           \
+ccipc/sync/ccmutex.h              \
+ccipc/sync/ccrw_lock.h            \
+ccipc/sync/ccsemaphore.h          \
+ccipc/thread/ccthread.h           \
+ccipc/thread/ccthread_sender.h    
 
 pkgconfig_DATA = ccipc.pc
 

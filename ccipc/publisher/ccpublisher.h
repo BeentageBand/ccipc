@@ -11,9 +11,9 @@
 #include <map>
 #include <set>
 #include <sstream>
-#include "ipc/ccipc.h"
-#include "ipc/sync/ccrw_lock.h"
-#include "ipc/validator/ccvalidator.h"
+#include "ccipc/ccipc.h"
+#include "ccipc/sync/ccrw_lock.h"
+#include "ccipc/validator/ccvalidator.h"
 
 namespace cc
 {
