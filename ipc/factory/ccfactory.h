@@ -1,14 +1,14 @@
 #ifndef CCFACTORY_H_
 #define CCFACTORY_H_
 
-#include "ccipc.h"
-#include "ccbarrier.h"
-#include "cccond_var.h"
-#include "ccmutex.h"
-#include "ccrw_lock.h"
-#include "ccsemaphore.h"
-#include "ccthread.h"
-#include "ccvalidator.h"
+#include "ipc/ccipc.h"
+#include "ipc/sync/ccbarrier.h"
+#include "ipc/sync/cccond_var.h"
+#include "ipc/sync/ccmutex.h"
+#include "ipc/sync/ccrw_lock.h"
+#include "ipc/sync/ccsemaphore.h"
+#include "ipc/thread/ccthread.h"
+#include "ipc/validator/ccvalidator.h"
 
 namespace cc
 {

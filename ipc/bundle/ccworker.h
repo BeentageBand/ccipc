@@ -9,9 +9,9 @@
 #define CCWORKER_H_
 
 
-#include "ccipc.h"
-#include "ccthread.h"
-#include "ccbundle.h"
+#include "ipc/ccipc.h"
+#include "ipc/thread/ccthread.h"
+#include "ipc/bundle/ccbundle.h"
 
 namespace cc
 {

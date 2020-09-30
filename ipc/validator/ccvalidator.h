@@ -1,7 +1,7 @@
 #ifndef CCVALIDATOR_H_
 #define CCVALIDATOR_H_
 
-#include "ipc_types.h"
+#include "ipc/common/ipc_types.h"
 
 namespace cc {
 

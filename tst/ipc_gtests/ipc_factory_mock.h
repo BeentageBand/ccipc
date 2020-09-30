@@ -1,8 +1,8 @@
 #ifndef IPC_FACTORY_MOCK_H_
 #define IPC_FACTORY_MOCK_H_
 #include "gmock/gmock.h"
-#include "ccfactory.h"
-#include "ccbundle.h"
+#include "ipc/bundle/ccbundle.h"
+#include "ipc/factory/ccfactory.h"
 
 class Mock_Factory : public cc::Factory
 {

@@ -6,7 +6,7 @@
  */
 #include <algorithm>
 #include "ccmailbox.h"
-#include "ccfactory.h"
+#include "ipc/factory/ccfactory.h"
 
 using namespace std;
 using namespace cc;

@@ -1,5 +1,5 @@
 #include "ipc_factory_mock.h"
-#include "ccthread.h"
+#include "ipc/thread/ccthread.h"
 #include "tst/ipc-config.h"
 
 using namespace ::testing;

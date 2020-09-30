@@ -1,6 +1,6 @@
 #include <vector>
 #include "ipc_factory_mock.h"
-#include "ccpublisher.h"
+#include "ipc/publisher/ccpublisher.h"
 #include "tst/ipc-config.h"
 
 using namespace ::testing;

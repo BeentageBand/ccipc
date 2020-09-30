@@ -1,5 +1,5 @@
 #include "ipc_factory_mock.h"
-#include "ccworker.h"
+#include "ipc/bundle/ccworker.h"
 #include "tst/ipc-config.h"
 
 using namespace ::testing;

@@ -12,10 +12,10 @@
 #include <map>
 #include <sstream>
 
-#include "ipc_types.h"
-#include "ccmailbox.h"
-#include "ccrw_lock.h"
-#include "ccvalidator.h"
+#include "common/ipc_types.h"
+#include "mailbox/ccmailbox.h"
+#include "sync/ccrw_lock.h"
+#include "validator/ccvalidator.h"
 
 namespace cc
 {

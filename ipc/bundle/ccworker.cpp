@@ -1,8 +1,7 @@
-#define Dbg_FID DBG_FID_DEF(IPC_FID,0)
 #include <memory>
-#include "ccipc.h"
-#include "ccmailbox.h"
-#include "ccworker.h"
+#include "ipc/ccipc.h"
+#include "ipc/bundle/ccworker.h"
+#include "ipc/mailbox/ccmailbox.h"
 #include "logger/logger.h"
 
 #define Dbg_Info(...) Logger_info(get_log(), __VA_ARGS__)

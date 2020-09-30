@@ -1,6 +1,6 @@
-#include "tst/ipc-config.h"
 #include "gmock/gmock.h"
-#include "ccmail.h"
+#include "tst/ipc-config.h"
+#include "ipc/mail/ccmail.h"
 
 using namespace cc;
 using namespace std;

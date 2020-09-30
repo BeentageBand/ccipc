@@ -1,7 +1,7 @@
 #ifndef CCMUTEX_H_
 #define CCMUTEX_H_
 
-#include "ipc_types.h"
+#include "ipc/common/ipc_types.h"
 
 namespace cc
 {

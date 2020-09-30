@@ -1,7 +1,7 @@
 #ifndef CCRW_LOCK_H_
 #define CCRW_LOCK_H_
 
-#include "ipc_types.h"
+#include "ipc/common/ipc_types.h"
 
 namespace cc
 {

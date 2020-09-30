@@ -2,7 +2,7 @@
 #define IPC_CONFIG_H_
 
 #include "tst/ipc_gtest_worker/ipc_gtest_worker_evs.h"
-#include "worker_mailist.h"
+#include "ipc/bundle/ccworker_mailist.h"
 
 #define IPC_ENUM(id, desc) id,
 

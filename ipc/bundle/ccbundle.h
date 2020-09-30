@@ -1,6 +1,8 @@
 #ifndef CCBUNDLE_H_
 #define CCBUNDLE_H_
 
+#include "ipc/mail/ccmail.h"
+
 namespace cc
 {
 class Bundle

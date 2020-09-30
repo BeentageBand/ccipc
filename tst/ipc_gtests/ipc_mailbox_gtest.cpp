@@ -1,6 +1,6 @@
 #include "tst/ipc-config.h"
 #include "ipc_factory_mock.h"
-#include "ccmailbox.h"
+#include "ipc/mailbox/ccmailbox.h"
 
 using namespace cc;
 using namespace std;

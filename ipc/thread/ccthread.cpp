@@ -4,8 +4,8 @@
  *  Created on: Aug 31, 2017
  *        Author: puchh
  */
-#include "ccfactory.h"
-#include "ccthread.h"
+#include "ipc/factory/ccfactory.h"
+#include "ipc/thread/ccthread.h"
 
 using namespace cc;
 using namespace std;
